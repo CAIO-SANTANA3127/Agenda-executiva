@@ -2,376 +2,131 @@
 
 # 📅 Agenda Executiva
 
-### Sistema Inteligente de Gestão de Reuniões com WhatsApp
+### Sistema de Gestão de Reuniões com Confirmação Automática via WhatsApp
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/flask-2.0+-green.svg)](https://flask.palletsprojects.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Integration-25D366?logo=whatsapp)](https://evolution-api.com/)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?logo=whatsapp)](https://evolution-api.com/)
 
-[Funcionalidades](#-funcionalidades) • [Instalação](#-instalação) • [Uso](#-uso) • [API](#-api-endpoints) • [Contribuir](#-contribuindo)
+Sistema completo para gestão de reuniões executivas com integração WhatsApp (Evolution API), análise inteligente de respostas, calendário interativo e disparador automático de aniversários.
 
-![Agenda Executiva](https://img.shields.io/badge/Status-Em%20Produção-success)
+[Instalação](#-instalação-rápida) • [Configuração](#%EF%B8%8F-configuração) • [Uso](#-uso-básico) • [API](#-endpoints-principais)
 
 </div>
 
 ---
 
-## 🎯 Sobre o Projeto
+## ✨ Principais Funcionalidades
 
-**Agenda Executiva** é um sistema completo de gerenciamento de reuniões desenvolvido para otimizar o trabalho de executivos e consultores. Com integração direta ao WhatsApp via Evolution API, o sistema automatiza confirmações, monitora respostas através de IA e oferece um calendário interativo completo.
-
-### ✨ Diferenciais
-
-- 🤖 **Confirmação Automática**: Envia mensagem no WhatsApp assim que a reunião é criada
-- 🧠 **IA para Análise**: Processa respostas automaticamente (confirmação, recusa ou dúvida)
-- 📊 **Dashboard Completo**: Visualize estatísticas e status de todas as reuniões
-- 🎂 **Aniversários Integrados**: Sistema de parabéns automáticos para clientes
-- 📆 **Calendário Inteligente**: Feriados, eventos e reuniões em uma única tela
-- ⚡ **Detecção de Conflitos**: Alerta automático de horários duplicados
+- 🤖 **Confirmação Automática via WhatsApp** - Envia mensagem ao criar reunião
+- 🧠 **Análise Inteligente de Respostas** - Detecta confirmação, recusa ou dúvida automaticamente
+- 📊 **Dashboard com Estatísticas** - Métricas em tempo real
+- 🎂 **Sistema de Aniversários** - Disparos automáticos programados
+- 📆 **Calendário Completo** - Eventos, reuniões, feriados e aniversários
+- ⚡ **Detecção de Conflitos** - Alerta de horários duplicados
 
 ---
 
-## 🚀 Funcionalidades
+## 🛠️ Stack Tecnológico
 
-### 📋 Gestão de Reuniões
-
-- ✅ CRUD completo de reuniões
-- 📱 Envio automático de confirmações via WhatsApp
-- 🔄 Processamento em tempo real de respostas (webhook)
-- 🎯 Análise de sentimento e intenção nas mensagens
-- 📈 Dashboard com métricas e estatísticas
-- 🔔 Detecção automática de conflitos de horário
-- 📝 Histórico completo de interações
-- 🔍 Busca e filtros avançados
-
-### 💬 Integração WhatsApp (Evolution API)
-
-- ⚡ Envio instantâneo ao criar reunião
-- 🎯 Monitoramento ativo via webhook
-- 🧠 Análise inteligente de respostas:
-  - ✅ **Confirmadas**: "sim", "ok", "confirmo", "vou", 👍
-  - ❌ **Recusadas**: "não", "não posso", "cancelar", 👎
-  - ❓ **Dúvidas**: "talvez", "verificar", "depois"
-- 📊 Status em tempo real
-- 🔄 Sistema de reagendamento automático
-- 📱 Suporte a múltiplas instâncias
-
-### 🎂 Sistema de Aniversários
-
-- 📋 Importação via planilha Excel (.xls/.xlsx)
-- ⏰ Disparo automático agendado (configurável)
-- 📝 Templates personalizáveis com variáveis
-- 📊 Dashboard de aniversariantes do mês
-- 🔄 Sincronização automática com planilha
-- 🎉 Mensagens personalizadas por cliente
-
-### 📆 Calendário Interativo
-
-- 🗓️ Visualização mensal completa
-- 🎉 Feriados brasileiros automáticos
-- 🎂 Aniversários integrados
-- ✈️ Eventos multi-dia (viagens, feiras, conferências)
-- 🎨 Código de cores por status:
-  - 🟢 Confirmada
-  - 🟡 Pendente
-  - 🔴 Recusada
-  - 🔵 Evento
-- 📱 Responsivo e otimizado
-
-### 🔍 Autocomplete Inteligente
-
-- ⚡ Busca fuzzy de clientes
-- 📊 Cache otimizado para performance
-- 📁 Importação automática via Excel
-- 🔄 Sincronização em tempo real
-- 🎯 Sugestões contextuais
-
----
-
-## 🛠️ Tecnologias
-
-### Backend
-- **Python 3.8+** - Linguagem principal
-- **Flask 2.0+** - Framework web
-- **SQLite** - Banco de dados relacional
-- **Evolution API** - Gateway WhatsApp
-- **Schedule** - Agendamento de tarefas
-- **Pandas** - Manipulação de dados
-
-### Frontend
-- **HTML5/CSS3** - Interface responsiva
-- **JavaScript ES6+** - Interatividade
-- **Font Awesome 6** - Ícones
-- **Bootstrap 5** - Framework CSS
-
-### Bibliotecas Python
-```
-Flask>=2.0.0
-pandas>=1.3.0
-openpyxl>=3.0.0
-python-dateutil>=2.8.0
-requests>=2.26.0
-schedule>=1.1.0
-websocket-client>=1.0.0
-```
+**Backend:** Python 3.8+ • Flask • SQLite • Evolution API  
+**Frontend:** HTML5 • CSS3 • JavaScript • Bootstrap • Font Awesome
 
 ---
 
 ## 📋 Pré-requisitos
 
-### Obrigatório
-- ✅ Python 3.8 ou superior
-- ✅ Evolution API configurada e rodando
-- ✅ Servidor com IP público ou túnel (ngrok)
-
-### Recomendado
-- 💻 Sistema operacional: Ubuntu 20.04+ / Windows 10+
-- 🧠 RAM: 1GB mínimo, 2GB recomendado
-- 💾 Disco: 500MB disponível
-- 🌐 Conexão estável com a internet
+- Python 3.8+
+- Evolution API configurada
+- IP público ou ngrok
 
 ---
 
-## ⚙️ Instalação
+## 🚀 Instalação Rápida
 
-### 1️⃣ Clone o Repositório
 ```bash
+# Clone o repositório
 git clone https://github.com/CAIO-SANTANA3127/Agenda-executiva.git
 cd Agenda-executiva
-```
 
-### 2️⃣ Crie um Ambiente Virtual (Recomendado)
-```bash
-# Linux/Mac
+# Crie ambiente virtual (opcional mas recomendado)
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
 
-# Windows
-python -m venv venv
-venv\Scripts\activate
-```
-
-### 3️⃣ Instale as Dependências
-```bash
+# Instale dependências
 pip install -r requirements.txt
+
+# Execute
+python app.py
 ```
 
-### 4️⃣ Configure a Evolution API
+Acesse: **http://localhost:3000**
 
-Edite o arquivo `app.py` na **linha 35**:
+**Credenciais padrão:** `admin` / `@1234`
+
+---
+
+## ⚙️ Configuração
+
+Edite `app.py` (linha 35):
 
 ```python
 EVOLUTION_API_CONFIG = {
-    'base_url': 'http://SEU_IP:8090',           # URL da sua Evolution API
-    'api_key': 'SUA_API_KEY_AQUI',              # Sua chave de API
-    'instance_name': 'sua_instancia',           # Nome da instância
-    'webhook_url': 'http://SEU_IP:3000/webhook/evolution'  # URL do webhook
+    'base_url': 'http://SEU_IP:8090',
+    'api_key': 'SUA_API_KEY',
+    'instance_name': 'sua_instancia',
+    'webhook_url': 'http://SEU_IP:3000/webhook/evolution'
 }
 ```
 
-### 5️⃣ Inicialize o Banco de Dados
-```bash
-python app.py
-# Aguarde a mensagem "Database initialized"
-# Pressione Ctrl+C
-```
-
-### 6️⃣ Execute o Sistema
-```bash
-python app.py
-```
-
-O sistema estará disponível em: **http://localhost:3000**
-
----
-
-## 🔐 Credenciais Padrão
-
-```
-👤 Usuário: admin
-🔑 Senha: @1234
-```
-
-> ⚠️ **IMPORTANTE:** Altere essas credenciais imediatamente em ambiente de produção!
-
----
-
-## 🎯 Uso
-
-### Criar Reunião com Confirmação Automática
-
-1. Acesse a **Agenda** no menu principal
-2. Clique no botão **+ Nova Reunião**
-3. Preencha os campos obrigatórios:
-   - 📝 Nome do convidado
-   - 📞 Telefone (formato: 5521999999999)
-   - 📅 Data e horário
-   - 📋 Assunto
-4. ✅ Marque: **"Enviar confirmação automática via WhatsApp"**
-5. Clique em **Salvar**
-
-✨ A mensagem será enviada automaticamente!
-
-### Monitorar Respostas
-
-O sistema detecta e classifica automaticamente as respostas:
-
-**✅ Confirmações Positivas:**
-- Palavras: "sim", "ok", "confirmo", "confirmado", "vou", "com certeza", "pode ser", "tranquilo", "beleza"
-- Emojis: 👍 ✅ ✔️
-
-**❌ Recusas:**
-- Palavras: "não", "não posso", "não vou", "não consigo", "impossível", "inviável", "cancelar"
-- Emojis: 👎 ❌ ✖️
-
-**❓ Dúvidas:**
-- Palavras: "talvez", "não sei", "verificar", "confirmar depois", "ainda não"
-- Emojis: 🤔 ❓
-
-### Dashboard e Estatísticas
-
-Visualize em tempo real:
-- 📊 Total de reuniões por status
-- 📈 Taxa de confirmação
-- ⏰ Próximas reuniões
-- 🔔 Conflitos detectados
-- 📱 Últimas respostas recebidas
-
-### Sistema de Aniversários
-
-1. Prepare sua planilha Excel com as colunas:
-   - `NOME` - Nome completo
-   - `EMPRESA` - Empresa/organização
-   - `NASCIMENTO` - Data (dd/mm/aaaa)
-   - `WHATSAPP` - Telefone com DDI (5521999999999)
-
-2. Salve como: `ANIVERSARIOS_CLIENTES.xls`
-
-3. Acesse: **Menu → Disparador de Aniversários**
-
-4. Configure o horário de envio (padrão: 09:00)
-
-5. Clique em **Sincronizar Planilha**
-
-6. Sistema enviará automaticamente todos os dias!
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-agenda-executiva/
-│
-├── 📄 app.py                          # Aplicação Flask principal (3500+ linhas)
-├── 📄 cliente_autocomplete.py         # Sistema de busca de clientes
-├── 📄 requirements.txt                # Dependências Python
-│
-├── 🗄️ reunioes.db                     # Banco de reuniões (SQLite)
-├── 🗄️ sistema.db                      # Banco de aniversários (SQLite)
-│
-├── 📊 clientes.xlsx                   # Base de clientes
-├── 📊 ANIVERSARIOS_CLIENTES.xls       # Base de aniversários
-│
-├── 📁 templates/                      # Templates HTML
-│   ├── home.html                      # Dashboard principal
-│   ├── calendario.html                # Calendário interativo
-│   ├── disparo.html                   # Sistema de aniversários
-│   ├── login.html                     # Tela de autenticação
-│   └── ...                            # Outros templates
-│
-├── 📁 static/                         # Arquivos estáticos
-│   ├── css/                           # Estilos personalizados
-│   ├── js/                            # Scripts JavaScript
-│   └── images/                        # Imagens e ícones
-│
-└── 📄 README.md                       # Este arquivo
-```
-
----
-
-## 🔧 Configuração da Evolution API
-
-### Passo 1: Instalar Evolution API
-
-```bash
-# Via Docker (recomendado)
-docker run -d \
-  --name evolution-api \
-  -p 8090:8090 \
-  -e AUTHENTICATION_API_KEY=SUA_CHAVE_AQUI \
-  atendai/evolution-api:latest
-```
-
-### Passo 2: Criar Instância
-
+**Configure o Webhook na Evolution API:**
 1. Acesse: `http://SEU_IP:8090`
-2. Vá em **Instâncias → Criar Nova**
-3. Nomeie: `marco_reunioes_bot` (ou conforme configurado)
-4. Conecte via QR Code
-
-### Passo 3: Configurar Webhook
-
-1. Acesse: **Instâncias → Sua Instância → Webhooks**
-2. Configure:
-   ```
-   URL: http://SEU_IP:3000/webhook/evolution
-   Eventos: ✅ MESSAGES_UPSERT
-   ```
-3. Salve e teste
+2. Instâncias → Sua Instância → Webhooks
+3. URL: `http://SEU_IP:3000/webhook/evolution`
+4. Eventos: ✅ `MESSAGES_UPSERT`
 
 ---
 
-## 🌐 API Endpoints
+## 💡 Uso Básico
 
-### 🔐 Autenticação
-```http
-POST /login                    # Autenticar usuário
-GET  /logout                   # Encerrar sessão
-```
+**Criar Reunião com Confirmação Automática:**
+1. Acesse Agenda → Nova Reunião
+2. Preencha: Nome, Telefone (5521999999999), Data/Hora, Assunto
+3. Marque: "Enviar confirmação automática via WhatsApp"
+4. Salvar → Mensagem enviada automaticamente!
 
-### 📋 Reuniões
-```http
-GET    /api/reunioes                      # Listar todas as reuniões
-POST   /agenda/salvar                     # Criar nova reunião
-PUT    /agenda/editar/<id>                # Editar reunião
-DELETE /agenda/excluir/<id>               # Excluir reunião
-GET    /api/meetings/<id>/status          # Status específico
-GET    /agenda/responses/<id>             # Histórico de respostas
-```
+**Sistema reconhece automaticamente:**
+- ✅ Confirmações: "sim", "ok", "confirmo", "vou", 👍
+- ❌ Recusas: "não", "não posso", "cancelar", 👎
+- ❓ Dúvidas: "talvez", "verificar", 🤔
 
-### 💬 WhatsApp
-```http
-POST   /whatsapp/send-message             # Enviar mensagem manual
-GET    /whatsapp/status                   # Status da conexão
-POST   /whatsapp/force-monitor-all        # Forçar monitoramento
-GET    /whatsapp/monitoring-status        # Status do monitoramento
-GET    /whatsapp/logs                     # Visualizar logs
-POST   /webhook/evolution                 # Webhook (Evolution API)
-```
+**Sistema de Aniversários:**
+1. Prepare Excel com: NOME, EMPRESA, NASCIMENTO, WHATSAPP
+2. Salve como: `ANIVERSARIOS_CLIENTES.xls`
+3. Acesse: Menu → Disparador → Sincronizar Planilha
+4. Configure horário → Envios automáticos!
 
-### 📆 Eventos
-```http
-GET    /api/eventos/list                  # Listar eventos
-POST   /api/eventos/criar                 # Criar evento
-PUT    /api/eventos/editar/<id>           # Editar evento
-DELETE /api/eventos/excluir/<id>          # Excluir evento
-GET    /api/eventos/get/<id>              # Detalhes do evento
-```
+---
 
-### 🎂 Aniversários
-```http
-GET    /api/aniversarios/dashboard        # Dashboard completo
-POST   /api/aniversarios/sync-spreadsheet # Sincronizar planilha
-POST   /api/aniversarios/check-today      # Disparar aniversários de hoje
-GET    /api/aniversarios/upcoming         # Próximos aniversariantes
-POST   /api/aniversarios/send/<id>        # Enviar para aniversariante específico
-```
+## 🌐 Endpoints Principais
 
-### 📊 Dashboards
 ```http
-GET    /agenda/dados                      # Dados da agenda (JSON)
-GET    /health                            # Health check do sistema
+# Reuniões
+GET/POST   /api/reunioes              # Listar/Criar
+PUT/DELETE /agenda/editar/<id>        # Editar/Excluir
+GET        /api/meetings/<id>/status  # Status
+
+# WhatsApp
+POST /whatsapp/send-message           # Enviar mensagem
+GET  /whatsapp/monitoring-status      # Status monitoramento
+POST /whatsapp/force-monitor-all      # Forçar monitoramento
+POST /webhook/evolution               # Webhook Evolution API
+
+# Eventos & Aniversários
+GET/POST   /api/eventos/list          # Listar/Criar eventos
+POST       /api/aniversarios/sync-spreadsheet  # Sincronizar
 ```
 
 ---
@@ -761,4 +516,3 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
-
