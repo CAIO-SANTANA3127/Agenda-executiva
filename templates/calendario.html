@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendário - Agenda Executiva</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calendario.css') }}">
+</head>
+<body>
+  <div class="main-content">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="brand-accent">
+        <i class="fas fa-calendar-alt"></i>
+        Calendário Mensal
+      </h1>
+      <a href="/" class="btn-back">
+        <i class="fas fa-arrow-left"></i>
+        Voltar para Cards
+      </a>
+    </div>
+
+    <!-- Calendário -->
+    <div class="calendar-view">
+      <div class="calendar-header">
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" onclick="previousMonth()" title="Mês anterior">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <h2 class="calendar-current-month" id="currentMonth"></h2>
+          <button class="calendar-nav-btn" onclick="nextMonth()" title="Próximo mês">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <button class="calendar-today-btn" onclick="goToToday()">
+          <i class="fas fa-calendar-day"></i>
+          Hoje
+        </button>
+      </div>
+
+      <div class="calendar-weekdays">
+        <div class="calendar-weekday">Domingo</div>
+        <div class="calendar-weekday">Segunda</div>
+        <div class="calendar-weekday">Terça</div>
+        <div class="calendar-weekday">Quarta</div>
+        <div class="calendar-weekday">Quinta</div>
+        <div class="calendar-weekday">Sexta</div>
+        <div class="calendar-weekday">Sábado</div>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Carregando reuniões...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/calendario.js') }}"></script>
+</body>
+</html>

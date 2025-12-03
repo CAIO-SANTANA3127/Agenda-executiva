@@ -1,0 +1,3088 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 40%, #0f0f0f 100%);
+  min-height: 100vh;
+  color: #1a1a1a;
+  position: relative;
+  line-height: 1.6;
+}
+
+/* Padrão de fundo minimalista */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.008) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.008) 1px, transparent 1px);
+  background-size: 80px 80px;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header - Design ultra minimalista */
+.header {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 32px 40px;
+  border-radius: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  box-shadow: 
+    0 4px 16px rgba(250, 112, 154, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-refresh::before, .btn-clear-filters::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-refresh:hover::before, .btn-clear-filters:hover::before {
+  left: 100%;
+}
+
+.btn-refresh:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(53, 68, 184, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-clear-filters:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(250, 112, 154, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Week Info - Clean e elegante */
+.week-info {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1a1a1a;
+  padding: 20px 32px;
+  border-radius: 20px;
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 500;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.week-info i {
+  color: #64748b;
+  font-size: 18px;
+  background: rgba(100, 116, 139, 0.1);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+/* Meeting Cards - Design ultra clean */
+#meetingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.meeting-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+/* Destaque para próxima reunião - gradiente vibrante mas elegante */
+.meeting-card.upcoming-highlight {
+  border: 2px solid transparent !important;
+  background: rgba(255, 255, 255, 1) !important;
+  background-image: linear-gradient(white, white), linear-gradient(135deg, #e6ff01 0%, #ffdd00 100%) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.2),
+    0 5px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.meeting-card.upcoming-highlight::before {
+  content: '✨ Próxima';
+  position: absolute;
+  top: -1px;
+  right: 20px;
+  background: linear-gradient(135deg, #fee902 0%, #ff6c02 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 0 0 15px 15px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  box-shadow: 0 2px 8px rgba(248, 244, 1, 0.3);
+}
+
+.meeting-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.meeting-card.upcoming-highlight:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 16px 48px rgba(102, 126, 234, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.meeting-title {
+  color: #0a0a0a;
+  font-size: clamp(18px, 3vw, 22px);
+  font-weight: 700;
+  flex: 1;
+  line-height: 1.3;
+  word-break: break-word;
+  letter-spacing: -0.015em;
+}
+
+.meeting-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.meeting-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+}
+
+.status-today {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+.status-upcoming {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.status-past {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: rgba(22, 163, 74, 0.2);
+}
+
+.meeting-info {
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.info-item i {
+  width: 16px;
+  color: #64748b;
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.info-item span, .info-item a {
+  flex: 1;
+  word-break: break-word;
+}
+
+.info-item.time {
+  background: rgba(10, 10, 10, 0.04);
+  color: #0a0a0a;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 16px;
+  margin: 0 -4px 16px -4px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-item.time i {
+  color: #0a0a0a;
+}
+
+.info-item.link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.info-item.link a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.meeting-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.btn-action {
+  padding: 10px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 90px;
+  background: white;
+  color: #475569;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-details {
+  background: linear-gradient(135deg, #2f2f2e 0%, #0b0b0b 100%);
+  border: none;
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(79, 172, 254, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #fca400 0%, #e39b1e 100%);
+  border: none;
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(255, 234, 167, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #fc3e3e 0%, #f33906 100%);
+  border: none;
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(253, 121, 168, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-whatsapp-action {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border: none;
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(37, 211, 102, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(179, 51, 51, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-action:hover::before {
+  left: 100%;
+}
+
+.btn-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(79, 172, 254, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(255, 234, 167, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(253, 121, 168, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-whatsapp-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(37, 211, 102, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 40px;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+  color: #94a3b8;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* Loading Animation */
+.loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* WhatsApp floating action button */
+.whatsapp-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 32px rgba(37, 211, 102, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  border: none;
+  color: white;
+  font-size: 24px;
+}
+
+.whatsapp-fab:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 
+    0 16px 48px rgba(37, 211, 102, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.whatsapp-fab:active {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Enhanced form validation */
+.form-control.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-control.success {
+  border-color: #25d366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.success-message {
+  color: #25d366;
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Tipo de envio - Radio buttons customizados */
+.form-group input[type="radio"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+  accent-color: #25d366;
+}
+
+.form-group label[for*="send_type"] {
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.form-group label[for*="send_type"]:hover {
+  color: #25d366;
+}
+
+/* Preview da mensagem */
+#messagePreview {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  white-space: pre-wrap;
+  min-height: 100px;
+  color: #495057;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Media Queries - Responsividade refinada */
+@media (min-width: 768px) {
+  .filters {
+    grid-template-columns: 2fr 1fr 1fr 1fr auto auto;
+    gap: 16px;
+  }
+  
+  .meeting-actions {
+    flex-wrap: nowrap;
+  }
+  
+  .meeting-badges {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .action-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: 32px;
+  }
+  
+  .header {
+    padding: 40px 48px;
+    margin-bottom: 40px;
+  }
+  
+  .filters {
+    padding: 32px 40px;
+    margin-bottom: 40px;
+  }
+  
+  #meetingsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 32px;
+  }
+  
+  .meeting-card {
+    padding: 32px;
+  }
+  
+  .action-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    padding: 16px;
+  }
+  
+  .header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+    gap: 20px;
+  }
+  
+  .header-buttons {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn-primary, .btn-whatsapp {
+    flex: 1;
+    justify-content: center;
+    min-width: 140px;
+  }
+  
+  .whatsapp-status-indicator {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filters {
+    padding: 20px 24px;
+    grid-template-columns: 1fr;
+  }
+  
+  .meeting-actions {
+    flex-direction: column;
+  }
+  
+  .btn-action {
+    flex: none;
+    width: 100%;
+  }
+  
+  #meetingsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .meeting-card {
+    padding: 20px;
+  }
+  
+  .meeting-badges {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .modal {
+    padding: 12px;
+  }
+  
+  .modal-content {
+    margin: 10% auto;
+    border-radius: 20px;
+    max-width: 95%;
+  }
+  
+  .modal-body {
+    padding: 24px;
+  }
+  
+  .whatsapp-fab {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+  
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .status-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px;
+  }
+  
+  .header, .filters {
+    border-radius: 20px;
+    padding: 20px;
+  }
+  
+  .meeting-card {
+    border-radius: 20px;
+    padding: 18px;
+  }
+  
+  .modal-content {
+    border-radius: 16px;
+    margin: 5% auto;
+  }
+  
+  .brand-accent {
+    font-size: clamp(20px, 5vw, 24px);
+  }
+  
+  .empty-state {
+    padding: 40px 20px;
+  }
+  
+  .btn-primary, .btn-whatsapp {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+  
+  .whatsapp-status-indicator {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .filter-input {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .btn-refresh, .btn-clear-filters {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+/* Header - Design ultra minimalista */
+.header {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 32px 40px;
+  border-radius: 24px;
+  position: relative;
+}
+
+/* Linha sutil no topo */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.brand-accent {
+  color: #0a0a0a;
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 200px;
+  letter-spacing: -0.025em;
+}
+
+.brand-accent i {
+  background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+  color: white;
+  padding: 12px;
+  border-radius: 16px;
+  font-size: 0.75em;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.logo-inline {
+  height: 100px; /* Pequena e discreta */
+  width: auto;
+  border-radius: 16px; /* Opcional para borda levemente arredondada */
+  margin-left: 2px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Estilos para o indicador de status do WhatsApp */
+.whatsapp-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.whatsapp-status-indicator.connected {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: white;
+  border-color: rgba(37, 211, 102, 0.3);
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-status-indicator.disconnected {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border-color: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+.whatsapp-status-indicator.error {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #212529;
+  border-color: rgba(255, 193, 7, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+}
+
+.whatsapp-status-indicator:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.btn-primary, .btn-whatsapp {
+  border: none;
+  padding: 14px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(37, 211, 102, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-whatsapp::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-whatsapp:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(37, 211, 102, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Modal - Design ultra clean */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  margin: 5% auto;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.whatsapp-header {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 32px;
+}
+
+/* Status Modal específico */
+.status-section {
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.status-section:last-child {
+  border-bottom: none;
+}
+
+.status-section h3 {
+  color: #0a0a0a;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.status-indicator.connected {
+  color: #16a34a;
+}
+
+.status-indicator.connected i {
+  color: #16a34a;
+}
+
+.status-indicator.disconnected {
+  color: #dc2626;
+}
+
+.status-indicator.disconnected i {
+  color: #dc2626;
+}
+
+.status-details {
+  color: #64748b;
+  font-size: 14px;
+  margin-left: 24px;
+}
+
+.monitoring-details {
+  color: #64748b;
+  font-size: 14px;
+  margin-left: 24px;
+}
+
+.status-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-secondary, .btn-warning, .btn-info {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+}
+
+.btn-secondary:hover, .btn-warning:hover, .btn-info:hover {
+  transform: translateY(-2px);
+}
+
+/* QR Code Section */
+.qr-container {
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.qr-container p {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.qr-loading, .qr-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #64748b;
+}
+
+.qr-loading i {
+  font-size: 24px;
+  animation: spin 1s linear infinite;
+}
+
+.qr-error i {
+  font-size: 24px;
+  color: #dc2626;
+}
+
+/* Activity Log */
+.activity-log {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border-left: 4px solid #e5e7eb;
+}
+
+.activity-item.success {
+  background: rgba(34, 197, 94, 0.05);
+  border-left-color: #22c55e;
+}
+
+.activity-item.error,
+.activity-item.failed {
+  background: rgba(239, 68, 68, 0.05);
+  border-left-color: #ef4444;
+}
+
+.activity-item i {
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.activity-item.success i {
+  color: #22c55e;
+}
+
+.activity-item.error i,
+.activity-item.failed i {
+  color: #ef4444;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0a0a0a;
+  margin-bottom: 4px;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.activity-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.loading-activity, .no-activity {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+}
+
+.loading-activity i {
+  font-size: 20px;
+  margin-bottom: 8px;
+  animation: spin 1s linear infinite;
+}
+
+/* Meeting Details Modal */
+.meeting-details-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.meeting-details-section:last-child {
+  border-bottom: none;
+}
+
+.meeting-details-section h3 {
+  color: #495057;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.details-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #6c757d;
+  min-width: 120px;
+}
+
+.detail-item span {
+  color: #495057;
+}
+
+.detail-item a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.detail-item a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para status de confirmação */
+.confirmation-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.confirmation-status.status-confirmed {
+  background: #d4edda;
+  color: #155724;
+  border-color: rgba(21, 87, 36, 0.2);
+}
+
+.confirmation-status.status-declined {
+  background: #f8d7da;
+  color: #721c24;
+  border-color: rgba(114, 28, 36, 0.2);
+}
+
+.confirmation-status.status-pending {
+  background: #fff3cd;
+  color: #856404;
+  border-color: rgba(133, 100, 4, 0.2);
+}
+
+.confirmation-status.status-unclear {
+  background: #e2e3e5;
+  color: #6c757d;
+  border-color: rgba(108, 117, 125, 0.2);
+}
+
+.confirmation-status.status-reschedule {
+  background: #cce5ff;
+  color: #004085;
+  border-color: rgba(0, 64, 133, 0.2);
+}
+
+/* Estilos para respostas */
+.responses-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.response-item {
+  background: #f8f9fa;
+  border-left: 4px solid #dee2e6;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 0 8px 8px 0;
+}
+
+.response-item.status-confirmed {
+  border-left-color: #28a745;
+  background: #d4edda;
+}
+
+.response-item.status-declined {
+  border-left-color: #dc3545;
+  background: #f8d7da;
+}
+
+.response-item.status-reschedule {
+  border-left-color: #007bff;
+  background: #cce5ff;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.response-status {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.response-confidence {
+  color: #6c757d;
+}
+
+.response-time {
+  color: #6c757d;
+}
+
+.response-text {
+  font-style: italic;
+  color: #495057;
+}
+
+.no-responses {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Ações dos detalhes */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.btn-decline {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-pending {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  color: #1a1a1a;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+}
+
+.form-control {
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  background: white;
+  color: #1a1a1a;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #25d366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+}
+
+.btn-submit, .btn-whatsapp-submit, .btn-whatsapp-send {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-whatsapp-submit, .btn-whatsapp-send {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(37, 211, 102, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-submit::before, .btn-whatsapp-submit::before, .btn-whatsapp-send::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-submit:hover::before, .btn-whatsapp-submit:hover::before, .btn-whatsapp-send:hover::before {
+  left: 100%;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-whatsapp-submit:hover, .btn-whatsapp-send:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(37, 211, 102, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-template {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #1f2937;
+  border: 1px solid #cbd5e1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-template:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #111827;
+  transform: translateY(-1px);
+}
+
+.btn-config {
+  background: rgba(75, 85, 99, 0.1);
+  border: 1px solid rgba(75, 85, 99, 0.2);
+  color: #4b5563;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-config:hover {
+  background: rgba(75, 85, 99, 0.2);
+  color: #111827;
+  transform: rotate(90deg);
+}
+
+/* Filters - Design minimalista */
+.filters {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 24px 32px;
+  border-radius: 24px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.04);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.filter-group i {
+  color: #64748b;
+  font-size: 16px;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.filter-input {
+  flex: 1;
+  padding: 14px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  background: white;
+  color: #1a1a1a;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #0a0a0a;
+  box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08);
+}
+
+.filter-input::placeholder {
+  color: #94a3b8;
+}
+
+.btn-refresh, .btn-clear-filters {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-refresh {
+  background: linear-gradient(135deg, #191919 0%, #3544b8 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(53, 68, 184, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-clear-filters {
+  background: linear-gradient(135deg, #ea2761 0%, #ff0000 100%);
+  color: white;
+  box-shadow:
+    0 4px 16px rgba(234, 39, 97, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/*==================================================*/
+
+
+.diagnostic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.diagnostic-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.diagnostic-icon {
+  margin-right: 12px;
+  font-size: 20px;
+  color: #6b7280;
+}
+
+.diagnostic-info {
+  flex: 1;
+}
+
+.diagnostic-label {
+  display: block;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.diagnostic-status {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.diagnostic-action {
+  margin-left: 10px;
+}
+
+.btn-mini {
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.setup-wizard {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wizard-step {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 20px;
+}
+
+.wizard-step:last-child {
+  border-bottom: none;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 15px;
+  color: #6b7280;
+}
+
+.step-number.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.step-number.completed {
+  background: #10b981;
+  color: white;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-info h4 {
+  margin: 0 0 5px 0;
+  color: #1f2937;
+}
+
+.step-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.step-status i {
+  color: #6b7280;
+}
+
+.step-status i.fa-check {
+  color: #10b981;
+}
+
+.step-status i.fa-times {
+  color: #ef4444;
+}
+
+.step-status i.fa-spinner {
+  color: #3b82f6;
+}
+
+.btn-wizard {
+  padding: 8px 16px;
+  border: 1px solid #3b82f6;
+  background: #3b82f6;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-wizard:disabled {
+  background: #e5e7eb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.wizard-input {
+  margin-right: 10px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.step-details {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.qr-container-improved {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.qr-code-area {
+  text-align: center;
+}
+
+.qr-timer {
+  margin-top: 15px;
+  padding: 10px;
+  background: #fef3c7;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.qr-instructions h4 {
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+.qr-instructions ol {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.qr-instructions li {
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.qr-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.status-card-detailed {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.status-header {
+  padding: 15px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-header i:first-child {
+  margin-right: 8px;
+  color: #6b7280;
+}
+
+.status-body {
+  padding: 15px;
+}
+
+.status-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.status-detail:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.detail-value {
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.action-group label {
+  display: block;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-action {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-action:hover {
+  transform: translateY(-1px);
+}
+
+.log-container {
+  max-height: 200px;
+  overflow-y: auto;
+  background: #1f2937;
+  color: #f3f4f6;
+  padding: 15px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.log-entry {
+  margin-bottom: 5px;
+}
+
+.log-time {
+  color: #9ca3af;
+  margin-right: 10px;
+}
+
+.log-message {
+  color: #f3f4f6;
+}
+
+/* Estados dos indicadores */
+.status-indicator .fa-circle.connected {
+  color: #10b981;
+}
+
+.status-indicator .fa-circle.disconnected {
+  color: #ef4444;
+}
+
+.status-indicator .fa-circle.connecting {
+  color: #f59e0b;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+/*==================================*/
+/* ========================================
+   MELHORIAS PROFISSIONAIS NOS BOTÕES
+   Mantendo o visual atual, apenas melhorando cores e hierarquia
+   ======================================== */
+
+/* Header Buttons - Mais harmoniosos */
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(79, 70, 229, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(16, 185, 129, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(107, 114, 128, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+/* Filter Buttons - Cores mais equilibradas */
+.btn-refresh {
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(30, 41, 59, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-clear-filters {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  box-shadow:
+    0 4px 16px rgba(220, 38, 38, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Meeting Action Buttons - Hierarquia visual clara */
+.btn-details {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 90px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 90px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 90px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-whatsapp-action {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 90px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Modal Buttons - Consistência visual */
+.btn-submit {
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(79, 70, 229, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-whatsapp-submit, .btn-whatsapp-send {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(16, 185, 129, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status Modal Buttons */
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+/* Action Buttons para detalhes */
+.btn-confirm {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-decline {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-pending {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Template Buttons */
+.btn-template {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #374151;
+  border: 1px solid #cbd5e1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-config {
+  background: rgba(107, 114, 128, 0.1);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+  color: #6b7280;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* ========================================
+   EFEITOS HOVER MELHORADOS
+   ======================================== */
+
+/* Efeito shimmer melhorado */
+.btn-primary::before, 
+.btn-whatsapp::before, 
+.btn-secondary::before,
+.btn-submit::before, 
+.btn-whatsapp-submit::before, 
+.btn-whatsapp-send::before,
+.btn-refresh::before, 
+.btn-clear-filters::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.6s;
+}
+
+.btn-primary:hover::before, 
+.btn-whatsapp:hover::before, 
+.btn-secondary:hover::before,
+.btn-submit:hover::before, 
+.btn-whatsapp-submit:hover::before, 
+.btn-whatsapp-send:hover::before,
+.btn-refresh:hover::before, 
+.btn-clear-filters:hover::before {
+  left: 100%;
+}
+
+/* Hovers dos botões principais */
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(79, 70, 229, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(107, 114, 128, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Hovers dos botões de filtro */
+.btn-refresh:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(30, 41, 59, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-clear-filters:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(220, 38, 38, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Hovers dos botões de ação */
+.btn-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(30, 41, 59, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(245, 158, 11, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(239, 68, 68, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-whatsapp-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Hovers dos botões de modal */
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(79, 70, 229, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-whatsapp-submit:hover, .btn-whatsapp-send:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Hovers dos botões de status */
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+}
+
+.btn-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+}
+
+/* Hovers dos botões de ação especiais */
+.btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+.btn-decline:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+.btn-pending:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+}
+
+.btn-template:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(203, 213, 225, 0.4);
+}
+
+.btn-config:hover {
+  background: rgba(107, 114, 128, 0.2);
+  color: #374151;
+  transform: rotate(90deg);
+}
+
+/* ========================================
+   STATUS WHATSAPP MELHORADO
+   ======================================== */
+.whatsapp-status-indicator.connected {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.whatsapp-status-indicator.disconnected {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+}
+
+.whatsapp-status-indicator.error {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+}
+
+/* ========================================
+   ESTADOS ATIVOS E FOCUS
+   ======================================== */
+.btn-primary:active,
+.btn-whatsapp:active,
+.btn-secondary:active {
+  transform: translateY(-1px);
+}
+
+.btn-primary:focus,
+.btn-whatsapp:focus,
+.btn-secondary:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 3px rgba(79, 70, 229, 0.2),
+    0 4px 16px rgba(79, 70, 229, 0.25);
+}
+
+/* Estados desabilitados */
+.btn-primary:disabled,
+.btn-whatsapp:disabled,
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary:disabled:hover,
+.btn-whatsapp:disabled:hover,
+.btn-secondary:disabled:hover {
+  transform: none;
+  box-shadow: 
+    0 4px 16px rgba(79, 70, 229, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/*============================*/
+/* ===========================
+   ESTILOS PARA AUTOCOMPLETE DE CLIENTES
+   Adicione ao seu arquivo CSS principal
+   ========================== */
+
+/* Container principal do autocomplete */
+.autocomplete-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Campo de input com estados */
+.autocomplete-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+    box-sizing: border-box;
+}
+
+.autocomplete-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Estado de loading */
+.autocomplete-input.loading {
+    background-image: url("data:image/svg+xml,%3csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23666'%3e%3cpath d='M10 3a7 7 0 0 1 7 7 1 1 0 1 1-2 0 5 5 0 1 0-5 5 1 1 0 1 1 0 2 7 7 0 0 1-7-7 7 7 0 0 1 7-7z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    animation: spin 1s linear infinite;
+    padding-right: 45px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Estado ativo (dropdown aberto) */
+.autocomplete-input.autocomplete-active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: #e1e5e9;
+}
+
+/* Estado de cliente selecionado */
+.autocomplete-input.client-selected {
+    background-color: #ecfdf5 !important;
+    border-color: #059669 !important;
+}
+
+/* Container das sugestões */
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+}
+
+.autocomplete-suggestions.visible {
+    display: block;
+}
+
+/* Scrollbar customizada */
+.autocomplete-suggestions::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete-suggestions::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.autocomplete-suggestions::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.autocomplete-suggestions::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Item de sugestão */
+.autocomplete-suggestion {
+    padding: 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.autocomplete-suggestion:hover,
+.autocomplete-suggestion.active {
+    background-color: #f8fafc;
+    border-left: 3px solid #3b82f6;
+    padding-left: 13px;
+}
+
+.autocomplete-suggestion:last-child {
+    border-bottom: none;
+}
+
+/* Conteúdo da sugestão */
+.suggestion-primary {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.suggestion-secondary {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #6b7280;
+    flex-wrap: wrap;
+}
+
+.suggestion-company {
+    color: #3b82f6;
+    font-weight: 500;
+}
+
+.suggestion-phone {
+    color: #059669;
+    font-weight: 500;
+}
+
+/* Highlight de busca */
+.autocomplete-suggestion strong {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Estados especiais */
+.autocomplete-loading,
+.autocomplete-no-results {
+    padding: 16px;
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.autocomplete-loading {
+    color: #6b7280;
+}
+
+.autocomplete-no-results {
+    color: #9ca3af;
+}
+
+/* Estatísticas do autocomplete */
+.autocomplete-stats {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+/* Indicador de cliente selecionado */
+.client-selected-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #059669;
+    font-size: 18px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Botões de ação */
+.autocomplete-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn-autocomplete {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    color: #374151;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-autocomplete:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-autocomplete.primary {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.btn-autocomplete.primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .autocomplete-suggestion {
+        padding: 12px;
+    }
+    
+    .suggestion-secondary {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .autocomplete-suggestions {
+        max-height: 250px;
+    }
+    
+    .autocomplete-input {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+}
+
+/* Estados de erro */
+.autocomplete-error {
+    padding: 16px;
+    text-align: center;
+    color: #dc2626;
+    background-color: #fee2e2;
+    border-bottom: 1px solid #fecaca;
+    font-size: 14px;
+}
+
+/* Animações suaves */
+.autocomplete-suggestions {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Melhoria para campos readonly */
+.form-control[readonly] {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+/* Integração com tema escuro (opcional) */
+@media (prefers-color-scheme: dark) {
+    .autocomplete-suggestions {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .autocomplete-suggestion {
+        border-bottom-color: #374151;
+    }
+    
+    .autocomplete-suggestion:hover,
+    .autocomplete-suggestion.active {
+        background-color: #374151;
+    }
+    
+    .suggestion-primary {
+        color: #f9fafb;
+    }
+    
+    .suggestion-secondary {
+        color: #9ca3af;
+    }
+    
+    .autocomplete-stats {
+        background: #374151;
+        color: #9ca3af;
+    }
+}
+
+/* Melhorias de acessibilidade */
+.autocomplete-suggestion:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+}
+
+/* Loading skeleton (opcional) */
+.autocomplete-skeleton {
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.autocomplete-skeleton-line {
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.autocomplete-skeleton-line:last-child {
+    margin-bottom: 0;
+    width: 60%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Correções específicas para integração */
+.form-group .autocomplete-container {
+    margin-bottom: 0;
+}
+
+.form-group small {
+    margin-top: 5px;
+    display: block;
+}
+
+/* Melhorias para telas pequenas */
+@media (max-width: 480px) {
+    .autocomplete-actions {
+        flex-direction: column;
+    }
+    
+    .btn-autocomplete {
+        justify-content: center;
+    }
+}
+
+/* ========================================
+   SISTEMA DE EVENTOS
+   ======================================== */
+
+/* Modal Header Evento */
+.modal-header-evento {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #1f2937 !important;
+}
+
+/* Botão Evento Header */
+.btn-evento-header {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1f2937;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 16px rgba(251, 191, 36, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-evento-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn-evento-header:hover::before {
+  left: 100%;
+}
+
+.btn-evento-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(251, 191, 36, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Botão Submit Evento */
+.btn-evento {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #1f2937 !important;
+  box-shadow: 
+    0 4px 16px rgba(251, 191, 36, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-evento:hover {
+  box-shadow: 
+    0 8px 25px rgba(251, 191, 36, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Cards de Eventos - Estilo Amarelado */
+.evento-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 
+    0 4px 16px rgba(251, 191, 36, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  position: relative;
+}
+
+.evento-card::before {
+  content: '📅 EVENTO';
+  position: absolute;
+  top: -1px;
+  right: 20px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1f2937;
+  padding: 4px 12px;
+  border-radius: 0 0 12px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.evento-card:hover {
+  transform: translateY(-3px);
+  border-color: #f59e0b !important;
+  box-shadow: 
+    0 12px 40px rgba(251, 191, 36, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Badge de Tipo de Evento */
+.evento-tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid #fbbf24;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Cores alternativas para cards de eventos */
+.evento-card.cor-laranja {
+  background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%) !important;
+  border-color: #fb923c !important;
+}
+
+.evento-card.cor-verde {
+  background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%) !important;
+  border-color: #34d399 !important;
+}
+
+.evento-card.cor-azul {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  border-color: #60a5fa !important;
+}
+
+.evento-card.cor-roxo {
+  background: linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%) !important;
+  border-color: #a78bfa !important;
+}
+
+/* Info Item para eventos (duração) */
+.evento-duracao {
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evento-duracao i {
+  color: #f59e0b;
+}
+
+/* Botão de ação para eventos */
+.btn-evento-action {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #1f2937 !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3) !important;
+}
+
+.btn-evento-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(251, 191, 36, 0.4) !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .btn-evento-header {
+    flex: 1;
+    justify-content: center;
+    min-width: 140px;
+  }
+}

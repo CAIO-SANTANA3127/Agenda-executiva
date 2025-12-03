@@ -1,0 +1,23 @@
+{
+  "base_url": "http://localhost:8090",
+  "api_key": "MARCO_EVOLUTION_KEY_2024",
+  "instance_name": "marco_reunioes_bot",
+  "webhook_url": "http://localhost:3000/webhook/evolution",
+  "phone_number": "5511999999999",
+  "settings": {
+    "reject_call": false,
+    "msg_call": "Não posso atender chamadas no momento.",
+    "groups_ignore": true,
+    "always_online": true,
+    "read_messages": true,
+    "read_status": true
+  },
+  "database": {
+    "enabled": true,
+    "connection": {
+      "type": "sqlite",
+      "database": "./agenda_executiva.db"
+    }
+  },
+  "log_level": "INFO"
+}

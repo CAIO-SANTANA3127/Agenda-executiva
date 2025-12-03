@@ -1,0 +1,4 @@
+/chrome_user_data
+/venv
+/__pycache__
+*.log

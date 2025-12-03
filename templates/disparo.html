@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Aniversários - 2D Consultores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/disparador.css') }}">
+    
+    <!-- CSS APENAS PARA O MODAL -->
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #f8f9fa;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-group.error input {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-group.error .error-message {
+            display: block;
+        }
+
+        .btn-add-person {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-add-person:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+        }
+	  /* Estilos adicionais para o modal aprimorado */
+.input-group small {
+    color: #6c757d;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#dataPreview {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#previewContent div {
+    margin-bottom: 5px;
+}
+
+#previewContent strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.input-group.success input {
+    border-color: #27ae60;
+    background: #f8fff9;
+}
+
+.success-message {
+    color: #27ae60;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.input-group.success .success-message {
+    display: block;
+}
+
+/* Animações para feedback visual */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.input-group.error input {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Loading state do botão */
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading:after {
+    content: "⏳ Salvando...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+}	
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section floating">
+                    <div class="logo-container">
+                        <img class="logo-inline" src="{{ url_for('static', filename='Imagens/logo2d.webp') }}" alt="2D Consultores">
+                    </div>
+                </div>
+                
+                <div class="content-section">
+                    <h1>🎂 Sistema de Aniversários</h1>
+                    <p>Gerencie aniversariantes e envie mensagens automáticas via WhatsApp</p>
+                    
+                    <div class="nav-links">
+                        <a href="/agenda">
+                            <span>📅</span>
+                            <span>Agenda</span>
+                        </a>
+                        <a href="#" onclick="checkWhatsAppConnection()">
+                            <span>📱</span>
+                            <span>Status WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="status-section">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>Sistema Ativo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="alerts" class="alerts"></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('spreadsheet')">📄 Planilha</button>
+            <button class="tab" onclick="showTab('manage')">👥 Gerenciar</button>
+            <button class="tab" onclick="showTab('config')">⚙️ Configurações</button>
+            <button class="tab" onclick="showTab('logs')">📋 Histórico</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section">
+                <h2>Estatisticas:</h2>
+                <div id="dashboard-stats" class="stats-grid">
+                    <div class="loading">Carregando estatísticas...</div>
+                </div>
+                
+                <div id="spreadsheet-status"></div>
+                
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-success" onclick="checkTodayBirthdays()">
+                        🎉 Verificar Aniversários de Hoje
+                    </button>
+                    <button class="btn btn-primary" onclick="loadDashboard()">
+                        🔄 Atualizar
+                    </button>
+                    <button class="btn btn-warning" onclick="syncSpreadsheet()">
+                        🔄 Sincronizar Planilha
+                    </button>
+                </div>
+
+                <div id="today-birthdays"></div>
+            </div>
+        </div>
+
+        <!-- Spreadsheet Tab -->
+        <div id="spreadsheet" class="tab-content">
+            <div class="section">
+                <h2>📄 Gerenciar Planilha Fixa</h2>
+                <p>O sistema trabalha com uma planilha fixa: <strong>ANIVERSARIOS_CLIENTES.xls</strong></p>
+                <p>Colunas necessárias: <strong>NOME</strong>, <strong>EMPRESA</strong>, <strong>NASCIMENTO</strong>, <strong>WHATSAPP</strong></p>
+                
+                <div id="current-spreadsheet-info" class="spreadsheet-info">
+                    <div class="loading">Carregando informações da planilha...</div>
+                </div>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <h3>📂 Atualizar Planilha</h3>
+                    <p>Arraste e solte a nova planilha aqui ou clique para selecionar</p>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                    <button class="btn btn-primary">Escolher Nova Planilha</button>
+                </div>
+                
+                <div class="btn-group" style="text-align: center; margin: 20px 0;">
+                    <button class="btn btn-success" onclick="syncSpreadsheet()">
+                        🔄 Sincronizar Dados da Planilha
+                    </button>
+                    <button class="btn btn-primary" onclick="loadSpreadsheetInfo()">
+                        📊 Verificar Status
+                    </button>
+                    <button class="btn btn-warning" onclick="initDatabase()">
+                        🛠️ Inicializar Banco
+                    </button>
+                </div>
+                
+                <div id="syncProgress" class="hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p>Sincronizando dados...</p>
+                </div>
+                
+                <div id="syncResults"></div>
+            </div>
+        </div>
+
+        <!-- Manage Tab -->
+        <div id="manage" class="tab-content">
+            <div class="section">
+                <h2>👥 Gerenciar Aniversariantes</h2>
+                
+                <!-- BOTÃO ADICIONAR ADICIONADO AQUI -->
+                <button class="btn-add-person" onclick="openAddModal()">
+                    ➕ Adicionar Aniversariante
+                </button>
+                
+                <!-- Filtro de Pesquisa -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <input type="text" id="searchFilter" placeholder="🔍 Pesquisar por nome..." 
+                           style="width: 100%; padding: 12px; border: 2px solid #e0e6ed; border-radius: 8px; font-size: 14px;"
+                           oninput="filterAniversariantes()">
+                </div>
+                
+                <div id="aniversariantesTable" class="loading">Carregando...</div>
+            </div>
+        </div>
+
+        <!-- Config Tab -->
+        <div id="config" class="tab-content">
+            <div class="section">
+                <h2>⚙️ Configurações do Sistema</h2>
+                <form id="configForm">
+                    <div class="form-group">
+                        <label for="horario_envio">🕘 Horário de Envio:</label>
+                        <input type="time" id="horario_envio" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dias_antecedencia">📅 Antecedência:</label>
+                        <select id="dias_antecedencia">
+                            <option value="0">No dia do aniversário</option>
+                            <option value="1">1 dia antes</option>
+                            <option value="2">2 dias antes</option>
+                            <option value="3">3 dias antes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="template_mensagem">✉️ Template da Mensagem:</label>
+                        <textarea id="template_mensagem" rows="10" placeholder="Use {nome}, {empresa}, {idade} como placeholders"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="sistema_ativo"> 🔄 Sistema Ativo
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">💾 Salvar Configurações</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div id="logs" class="tab-content">
+            <div class="section">
+                <h2>📋 Histórico de Envios</h2>
+                <div id="logsTable" class="loading">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBSTITUA o modal existente no seu HTML por esta versão aprimorada -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>➕ Adicionar Novo Aniversariante</h3>
+            <button class="modal-close" onclick="closeAddModal()">&times;</button>
+        </div>
+        
+        <form id="addPersonForm">
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" name="nome" required maxlength="100" 
+                           placeholder="Nome completo do aniversariante">
+                    <div class="error-message">Nome é obrigatório</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="empresa">Empresa</label>
+                    <input type="text" id="empresa" name="empresa" maxlength="100" 
+                           placeholder="Nome da empresa (opcional)">
+                </div>
+
+                <div class="input-group">
+                    <label for="nascimento">Data de Nascimento *</label>
+                    <input type="date" id="nascimento" name="nascimento" required>
+                    <div class="error-message">Data de nascimento é obrigatória</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="whatsapp">WhatsApp *</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" 
+                           placeholder="21999999999 ou 5521999999999" 
+                           maxlength="13" required>
+                    <div class="error-message">WhatsApp é obrigatório (formato brasileiro: 21999999999)</div>
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
+                        Formatos aceitos: 21999999999, 2199999999, 5521999999999
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="1">✅ Ativo (receberá mensagens)</option>
+                        <option value="0">❌ Inativo (não receberá mensagens)</option>
+                    </select>
+                </div>
+
+                <!-- Preview dos dados -->
+                <div id="dataPreview" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3498db;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 14px;">📋 Preview dos Dados:</h4>
+                    <div id="previewContent"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddModal()">
+                    ❌ Cancelar
+                </button>
+                <button type="submit" class="btn btn-success" id="submitBtn">
+                    💾 Salvar Aniversariante
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script>
+        // SEU CÓDIGO JAVASCRIPT ORIGINAL MANTIDO INTEGRALMENTE
+        
+        // Estado global
+        let currentConfig = {};
+        let aniversariantes = [];
+        let filteredAniversariantes = []; // Nova variável para lista filtrada
+        let spreadsheetInfo = {};
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            setupFileUpload();
+            loadConfig();
+        });
+
+        // Gerenciamento de abas
+        function showTab(tabName) {
+            // Remove active de todas as abas
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Ativa aba selecionada
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Carrega conteúdo específico da aba
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'spreadsheet':
+                    loadSpreadsheetInfo();
+                    break;
+                case 'manage':
+                    loadAniversariantes();
+                    break;
+                case 'config':
+                    loadConfig();
+                    break;
+                case 'logs':
+                    loadLogs();
+                    break;
+            }
+        }
+
+        // Dashboard
+        function loadDashboard() {
+            document.getElementById('dashboard-stats').innerHTML = '<div class="loading">Carregando estatísticas...</div>';
+            
+            fetch('/api/aniversarios/dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        spreadsheetInfo = data.spreadsheet_info;
+                        renderDashboard(data);
+                    } else {
+                        showAlert('Erro ao carregar dashboard: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Erro de conexão: ' + error.message, 'error');
+                });
+        }
+
+        function renderDashboard(data) {
+            const statsHtml = `
+                <div class="stat-card">
+                    <h3>📊 Total de Aniversariantes</h3>
+                    <div class="number">${data.stats.total_aniversariantes}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>🎂 Aniversários Hoje</h3>
+                    <div class="number">${data.stats.aniversarios_hoje}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>📅 Próximos 7 dias</h3>
+                    <div class="number">${data.stats.proximos_7_dias}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>📨 Enviados Hoje</h3>
+                    <div class="number">${data.stats.enviados_hoje}</div>
+                </div>
+            `;
+            
+            document.getElementById('dashboard-stats').innerHTML = statsHtml;
+            
+            // Renderiza status da planilha
+            renderSpreadsheetStatus(data.spreadsheet_info);
+            
+            // Renderiza aniversários de hoje
+            if (data.aniversarios_hoje.length > 0) {
+                const birthdaysHtml = `
+                    <h3>🎉 Aniversariantes de Hoje:</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Empresa</th>
+                                <th>WhatsApp</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.aniversarios_hoje.map(a => `
+                                <tr>
+                                    <td>${a.nome}</td>
+                                    <td>${a.empresa || '-'}</td>
+                                    <td>${a.whatsapp}</td>
+                                    <td>
+                                        <span class="status-badge ${a.enviado ? 'status-success' : 'status-pending'}">
+                                            ${a.enviado ? 'Enviado' : 'Pendente'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="sendTestMessage(${a.id})">
+                                            🤖 Testar
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('today-birthdays').innerHTML = birthdaysHtml;
+            } else {
+                document.getElementById('today-birthdays').innerHTML = '<p>😊 Nenhum aniversariante hoje.</p>';
+            }
+        }
+
+        function renderSpreadsheetStatus(info) {
+            let statusHtml = '';
+            
+            if (info.exists) {
+                statusHtml = `
+                    <div class="sync-status">
+                        <div>
+                            <strong>📄 Planilha Fixa:</strong> ANIVERSARIOS_CLIENTES.xls<br>
+                            <strong>📊 Registros:</strong> ${info.total_records}<br>
+                            <strong>📅 Última modificação:</strong> ${info.last_modified}<br>
+                            <strong>📏 Tamanho:</strong> ${info.file_size}
+                        </div>
+                        <button class="btn btn-success" onclick="syncSpreadsheet()">🔄 Sincronizar</button>
+                    </div>
+                `;
+            } else {
+                statusHtml = `
+                    <div class="sync-status error">
+                        <div>
+                            <strong>❌ Planilha não encontrada!</strong><br>
+                            Coloque o arquivo 'ANIVERSARIOS_CLIENTES.xls' na pasta raiz do projeto ou faça upload de uma nova planilha.
+                        </div>
+                        <button class="btn btn-primary" onclick="showTab('spreadsheet')">📄 Gerenciar Planilha</button>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('spreadsheet-status').innerHTML = statusHtml;
+        }
+
+        // Gerenciamento de planilha
+        function loadSpreadsheetInfo() {
+            document.getElementById('current-spreadsheet-info').innerHTML = '<div class="loading">Carregando informações...</div>';
+            
+            fetch('/api/aniversarios/dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderSpreadsheetInfo(data.spreadsheet_info);
+                    } else {
+                        showAlert('Erro ao carregar informações: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Erro de conexão: ' + error.message, 'error');
+                });
+        }
+
+        function renderSpreadsheetInfo(info) {
+            let infoHtml = '';
+            
+            if (info.exists) {
+                infoHtml = `
+                    <h3>📄 Status da Planilha Atual</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>📊 Total de Registros</strong><br>
+                            ${info.total_records}
+                        </div>
+                        <div class="info-item">
+                            <strong>📅 Última Modificação</strong><br>
+                            ${info.last_modified}
+                        </div>
+                        <div class="info-item">
+                            <strong>📏 Tamanho do Arquivo</strong><br>
+                            ${info.file_size}
+                        </div>
+                        <div class="info-item">
+                            <strong>✅ Status</strong><br>
+                            Ativo e sincronizado
+                        </div>
+                    </div>
+                `;
+            } else {
+                infoHtml = `
+                    <h3>❌ Planilha Não Encontrada</h3>
+                    <p style="color: #e74c3c; text-align: center; margin: 20px 0;">
+                        A planilha fixa 'ANIVERSARIOS_CLIENTES.xls' não foi encontrada.<br>
+                        Faça upload de uma nova planilha para começar.
+                    </p>
+                    ${info.error ? `<p style="color: #721c24;"><strong>Erro:</strong> ${info.error}</p>` : ''}
+                `;
+            }
+            
+            document.getElementById('current-spreadsheet-info').innerHTML = infoHtml;
+        }
+
+        function syncSpreadsheet() {
+            document.getElementById('syncProgress').classList.remove('hidden');
+            document.getElementById('syncResults').innerHTML = '';
+
+            // Simula progresso
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 15;
+                document.getElementById('progressFill').style.width = progress + '%';
+                if (progress >= 85) {
+                    clearInterval(progressInterval);
+                }
+            }, 100);
+
+            fetch('/api/aniversarios/sync-spreadsheet', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                document.getElementById('progressFill').style.width = '100%';
+                
+                setTimeout(() => {
+                    document.getElementById('syncProgress').classList.add('hidden');
+                    document.getElementById('progressFill').style.width = '0%';
+                    
+                    if (data.success) {
+                        let resultHtml = `
+                            <div class="alert alert-success">
+                                <h4>✅ Sincronização Concluída!</h4>
+                                <p><strong>${data.imported_count}</strong> novos registros importados.</p>
+                                <p><strong>${data.updated_count}</strong> registros atualizados.</p>
+                                ${data.error_count > 0 ? `<p><strong>${data.error_count}</strong> erros encontrados.</p>` : ''}
+                            </div>
+                        `;
+                        
+                        if (data.errors && data.errors.length > 0) {
+                            resultHtml += `
+                                <div class="alert alert-error">
+                                    <h4>❌ Erros Encontrados:</h4>
+                                    <ul>
+                                        ${data.errors.map(error => `<li>${error}</li>`).join('')}
+                                    </ul>
+                                    ${data.total_errors > data.errors.length ? `<p>... e mais ${data.total_errors - data.errors.length} erros.</p>` : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        document.getElementById('syncResults').innerHTML = resultHtml;
+                        loadDashboard();
+                        loadSpreadsheetInfo();
+                        
+                    } else {
+                        document.getElementById('syncResults').innerHTML = `
+                            <div class="alert alert-error">
+                                <h4>❌ Erro na Sincronização</h4>
+                                <p>${data.message}</p>
+                            </div>
+                        `;
+                    }
+                }, 500);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                document.getElementById('syncProgress').classList.add('hidden');
+                showAlert('Erro na sincronização: ' + error.message, 'error');
+            });
+        }
+
+        // Upload de arquivo
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            // Input change
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        function handleFileUpload(file) {
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                showAlert('Por favor, selecione um arquivo Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('syncProgress').classList.remove('hidden');
+            document.getElementById('syncResults').innerHTML = '';
+
+            // Simula progresso
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                document.getElementById('progressFill').style.width = progress + '%';
+                if (progress >= 90) {
+                    clearInterval(progressInterval);
+                }
+            }, 100);
+
+            fetch('/api/aniversarios/upload-spreadsheet', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                document.getElementById('progressFill').style.width = '100%';
+                
+                setTimeout(() => {
+                    document.getElementById('syncProgress').classList.add('hidden');
+                    document.getElementById('progressFill').style.width = '0%';
+                    
+                    if (data.success) {
+                        let resultHtml = `
+                            <div class="alert alert-success">
+                                <h4>✅ Planilha Atualizada e Sincronizada!</h4>
+                                <p><strong>${data.imported_count}</strong> novos registros importados.</p>
+                                <p><strong>${data.updated_count}</strong> registros atualizados.</p>
+                                ${data.error_count > 0 ? `<p><strong>${data.error_count}</strong> erros encontrados.</p>` : ''}
+                            </div>
+                        `;
+                        
+                        if (data.errors && data.errors.length > 0) {
+                            resultHtml += `
+                                <div class="alert alert-error">
+                                    <h4>❌ Erros Encontrados:</h4>
+                                    <ul>
+                                        ${data.errors.map(error => `<li>${error}</li>`).join('')}
+                                    </ul>
+                                    ${data.total_errors > data.errors.length ? `<p>... e mais ${data.total_errors - data.errors.length} erros.</p>` : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        document.getElementById('syncResults').innerHTML = resultHtml;
+                        loadDashboard();
+                        loadSpreadsheetInfo();
+                        
+                    } else {
+                        document.getElementById('syncResults').innerHTML = `
+                            <div class="alert alert-error">
+                                <h4>❌ Erro no Upload/Sincronização</h4>
+                                <p>${data.message}</p>
+                            </div>
+                        `;
+                    }
+                }, 500);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                document.getElementById('syncProgress').classList.add('hidden');
+                showAlert('Erro no upload: ' + error.message, 'error');
+            });
+        }
+
+        function initDatabase() {
+            if (!confirm('Deseja inicializar/reinicializar o banco de dados?')) {
+                return;
+            }
+
+            fetch('/api/aniversarios/init-db', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('✅ ' + data.message, 'success');
+                    loadDashboard();
+                    loadSpreadsheetInfo();
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        }
+
+        // Verificação manual de aniversários
+        function checkTodayBirthdays() {
+            fetch('/api/aniversarios/check-today', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.sent_count > 0) {
+                        showAlert(`🎉 ${data.sent_count} mensagens de aniversário enviadas!`, 'success');
+                    } else {
+                        showAlert(data.message, 'info');
+                    }
+                    loadDashboard();
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        }
+
+        // Gerenciar aniversariantes
+        function loadAniversariantes() {
+            document.getElementById('aniversariantesTable').innerHTML = '<div class="loading">Carregando...</div>';
+            
+            fetch('/api/aniversarios/list')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        aniversariantes = data.aniversariantes;
+                        filteredAniversariantes = [...aniversariantes]; // Cópia inicial
+                        renderAniversariantesTable();
+                    } else {
+                        showAlert('Erro ao carregar aniversariantes: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Erro de conexão: ' + error.message, 'error');
+                });
+        }
+
+        // FUNÇÃO DE FILTRO
+        function filterAniversariantes() {
+            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredAniversariantes = [...aniversariantes];
+            } else {
+                filteredAniversariantes = aniversariantes.filter(a => 
+                    a.nome.toLowerCase().includes(searchTerm) ||
+                    (a.empresa && a.empresa.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderAniversariantesTable();
+        }
+
+        function renderAniversariantesTable() {
+            if (filteredAniversariantes.length === 0) {
+                const searchTerm = document.getElementById('searchFilter').value;
+                if (searchTerm) {
+                    document.getElementById('aniversariantesTable').innerHTML = '<p>🔍 Nenhum resultado encontrado para sua pesquisa.</p>';
+                } else {
+                    document.getElementById('aniversariantesTable').innerHTML = '<p>📝 Nenhum aniversariante cadastrado. Sincronize a planilha para começar.</p>';
+                }
+                return;
+            }
+
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Empresa</th>
+                            <th>Nascimento</th>
+                            <th>WhatsApp</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredAniversariantes.map(a => `
+                            <tr>
+                                <td>${a.nome}</td>
+                                <td>${a.empresa || '-'}</td>
+                                <td>${formatDateDefinitivo(a.nascimento)}</td>
+                                <td>${a.whatsapp}</td>
+                                <td>
+                                    <span class="status-badge ${a.ativo ? 'status-success' : 'status-error'}">
+                                        ${a.ativo ? 'Ativo' : 'Inativo'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning" onclick="sendTestMessage(${a.id})">🤖 Testar</button>
+                                    <button class="btn btn-danger" onclick="deleteAniversariante(${a.id})">🗑️ Excluir</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p style="text-align: center; color: #666; margin-top: 10px;">
+                    Mostrando ${filteredAniversariantes.length} de ${aniversariantes.length} aniversariantes
+                </p>
+            `;
+            
+            document.getElementById('aniversariantesTable').innerHTML = tableHtml;
+        }
+
+        // Configurações
+        function loadConfig() {
+            fetch('/api/aniversarios/config')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentConfig = data.config;
+                        document.getElementById('horario_envio').value = data.config.horario_envio || '09:00';
+                        document.getElementById('dias_antecedencia').value = data.config.dias_antecedencia || 0;
+                        document.getElementById('sistema_ativo').checked = data.config.ativo || false;
+                        document.getElementById('template_mensagem').value = data.config.template_mensagem || '';
+                    }
+                })
+                .catch(error => {
+                    showAlert('Erro ao carregar configurações: ' + error.message, 'error');
+                });
+        }
+
+        document.getElementById('configForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const config = {
+                horario_envio: document.getElementById('horario_envio').value,
+                dias_antecedencia: parseInt(document.getElementById('dias_antecedencia').value),
+                ativo: document.getElementById('sistema_ativo').checked,
+                template_mensagem: document.getElementById('template_mensagem').value
+            };
+            
+            fetch('/api/aniversarios/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('✅ Configurações salvas com sucesso!', 'success');
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        });
+
+        // Logs
+        function loadLogs() {
+            document.getElementById('logsTable').innerHTML = '<div class="loading">Carregando...</div>';
+            
+            fetch('/api/aniversarios/logs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderLogsTable(data.logs);
+                    } else {
+                        showAlert('Erro ao carregar logs: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Erro de conexão: ' + error.message, 'error');
+                });
+        }
+
+        function renderLogsTable(logs) {
+            if (logs.length === 0) {
+                document.getElementById('logsTable').innerHTML = '<p>📝 Nenhum log de envio encontrado.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Nome</th>
+                            <th>Empresa</th>
+                            <th>WhatsApp</th>
+                            <th>Status</th>
+                            <th>Erro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${logs.map(log => `
+                            <tr>
+                                <td>${formatDateTime(log.data_envio)}</td>
+                                <td>${log.nome_aniversariante || '-'}</td>
+                                <td>${log.empresa_aniversariante || '-'}</td>
+                                <td>${log.whatsapp}</td>
+                                <td>
+                                    <span class="status-badge ${log.status === 'success' ? 'status-success' : 'status-error'}">
+                                        ${log.status === 'success' ? 'Sucesso' : 'Erro'}
+                                    </span>
+                                </td>
+                                <td>${log.erro || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('logsTable').innerHTML = tableHtml;
+        }
+
+        // Funções de ação
+        function sendTestMessage(id) {
+            if (!confirm('Deseja enviar uma mensagem de teste para este aniversariante?')) {
+                return;
+            }
+
+            fetch(`/api/aniversarios/test-message/${id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(`✅ Mensagem de teste enviada para ${data.nome}!`, 'success');
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        }
+
+        function deleteAniversariante(id) {
+            if (!confirm('Tem certeza que deseja excluir este aniversariante?')) {
+                return;
+            }
+
+            fetch(`/api/aniversarios/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('✅ ' + data.message, 'success');
+                    loadAniversariantes();
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        }
+
+        function checkWhatsAppConnection() {
+            fetch('/whatsapp/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.connected) {
+                        showAlert('✅ WhatsApp está conectado!', 'success');
+                    } else {
+                        showAlert(`❌ WhatsApp não está conectado: ${data.status_message}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    showAlert('❌ Erro ao verificar status do WhatsApp: ' + error.message, 'error');
+                });
+        }
+
+        // UTILITÁRIOS - FUNÇÕES DE DATA CORRIGIDAS E APRIMORADAS
+        
+        // FUNÇÃO DEFINITIVA PARA FORMATAR DATAS - SOLUÇÃO FINAL PARA O PROBLEMA DE -1 DIA
+        function formatDateDefinitivo(dateString) {
+            try {
+                // Se for nulo, undefined ou string vazia
+                if (!dateString || dateString === 'null' || dateString === 'undefined') {
+                    return '-';
+                }
+
+                // Se a data já está no formato correto brasileiro, retorna
+                if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+                    return dateString;
+                }
+                
+                // Converte para string e limpa
+                let cleanDate = String(dateString).trim();
+                
+                // Remove qualquer informação de tempo/timezone - CHAVE DA SOLUÇÃO
+                cleanDate = cleanDate.replace(/[TZ].*$/, '').split(' ')[0];
+                
+                // Padrões suportados
+                const patterns = [
+                    /^(\d{4})-(\d{2})-(\d{2})$/,  // yyyy-mm-dd (formato comum das planilhas)
+                    /^(\d{2})\/(\d{2})\/(\d{4})$/, // dd/mm/yyyy  
+                    /^(\d{4})\/(\d{2})\/(\d{2})$/, // yyyy/mm/dd
+                    /^(\d{2})-(\d{2})-(\d{4})$/   // dd-mm-yyyy
+                ];
+                
+                for (let pattern of patterns) {
+                    const match = cleanDate.match(pattern);
+                    if (match) {
+                        let day, month, year;
+                        
+                        if (pattern.source.startsWith('^(\\d{4})')) {
+                            // Formato yyyy-mm-dd (mais comum)
+                            year = parseInt(match[1]);
+                            month = parseInt(match[2]);
+                            day = parseInt(match[3]);
+                        } else {
+                            // Formato dd/mm/yyyy ou dd-mm-yyyy
+                            day = parseInt(match[1]);
+                            month = parseInt(match[2]);
+                            year = parseInt(match[3]);
+                        }
+                        
+                        // Validação rigorosa
+                        if (year >= 1900 && year <= 2100 && 
+                            month >= 1 && month <= 12 && 
+                            day >= 1 && day <= 31) {
+                            
+                            // SOLUÇÃO CHAVE: Criar data local às 12:00 para evitar problemas de timezone
+                            const date = new Date(year, month - 1, day, 12, 0, 0, 0);
+                            
+                            // Verificação adicional de validade
+                            if (date.getFullYear() === year && 
+                                date.getMonth() === month - 1 && 
+                                date.getDate() === day) {
+                                
+                                // Formatação garantida em pt-BR
+                                return date.toLocaleDateString('pt-BR', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Fallback mais robusto para datas em outros formatos
+                const fallbackDate = new Date(dateString);
+                if (!isNaN(fallbackDate.getTime())) {
+                    // Extrai componentes UTC e cria data local
+                    const year = fallbackDate.getUTCFullYear();
+                    const month = fallbackDate.getUTCMonth();
+                    const day = fallbackDate.getUTCDate();
+                    
+                    const localDate = new Date(year, month, day, 12, 0, 0, 0);
+                    return localDate.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                }
+                
+                return dateString;
+                
+            } catch (error) {
+                console.error('Erro ao formatar data:', dateString, error);
+                return dateString || '-';
+            }
+        }
+
+        // Função de compatibilidade (chama a função definitiva)
+        function formatDate(dateString) {
+            return formatDateDefinitivo(dateString);
+        }
+
+        // Função para formatar data e hora
+        function formatDateTime(dateString) {
+            try {
+                // Se for nulo, undefined ou string vazia
+                if (!dateString || dateString === 'null' || dateString === 'undefined') {
+                    return '-';
+                }
+
+                // Se já tem formato brasileiro, retorna
+                if (/^\d{2}\/\d{2}\/\d{4}/.test(dateString)) {
+                    return dateString;
+                }
+                
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleString('pt-BR', {
+                        timeZone: 'America/Sao_Paulo',
+                        day: '2-digit',
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+                
+                return dateString;
+                
+            } catch (error) {
+                console.error('Erro ao formatar data/hora:', dateString, error);
+                return dateString || '-';
+            }
+        }
+
+        // Função para mostrar alertas
+        function showAlert(message, type) {
+            const alertsDiv = document.getElementById('alerts');
+            const alertClass = type === 'success' ? 'alert-success' : type === 'error' ? 'alert-error' : 'alert-info';
+            
+            const alertId = 'alert-' + Date.now();
+            const alertHtml = `
+                <div id="${alertId}" class="alert ${alertClass}">
+                    ${message}
+                    <button class="close-btn" onclick="closeAlert('${alertId}')">&times;</button>
+                </div>
+            `;
+            
+            alertsDiv.insertAdjacentHTML('beforeend', alertHtml);
+            
+            // Remove automaticamente após 5 segundos
+            setTimeout(() => {
+                closeAlert(alertId);
+            }, 5000);
+        }
+
+        function closeAlert(alertId) {
+            const alertElement = document.getElementById(alertId);
+            if (alertElement) {
+                alertElement.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 300);
+            }
+        }
+
+        // Restante das suas funções originais (mantidas inalteradas)
+        // ... (continuação do seu código existente)
+
+        // FUNÇÕES DO MODAL ADICIONADAS AQUI
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('show');
+            clearForm();
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('show');
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('addPersonForm').reset();
+            document.querySelectorAll('.input-group').forEach(group => {
+                group.classList.remove('error');
+            });
+        }
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = ['nome', 'nascimento', 'whatsapp'];
+            
+            requiredFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const inputGroup = field.parentElement;
+                
+                if (!field.value.trim()) {
+                    inputGroup.classList.add('error');
+                    isValid = false;
+                } else {
+                    inputGroup.classList.remove('error');
+                }
+            });
+
+
+            // Validate WhatsApp format
+            const whatsappField = document.getElementById('whatsapp');
+            const whatsappValue = whatsappField.value.trim().replace(/\D/g, '');
+            const inputGroup = whatsappField.parentElement;
+           if (whatsappValue) {
+                // Aceita formatos: 11999999999, 21999999999, 5511999999999, etc.
+                const isValid11Digits = /^[1-9][1-9][0-9]{9}$/.test(whatsappValue) && whatsappValue[2] === '9';
+                const isValid10Digits = /^[1-9][1-9][0-9]{8}$/.test(whatsappValue);
+                const isValid13DigitsWithCountry = /^55[1-9][1-9][0-9]{9}$/.test(whatsappValue);
+                const isValid12DigitsOldFormat = /^55[1-9][1-9][0-9]{8}$/.test(whatsappValue);
+                
+                if (!(isValid11Digits || isValid10Digits || isValid13DigitsWithCountry || isValid12DigitsOldFormat)) {
+                    inputGroup.classList.add('error');
+                    const errorMsg = inputGroup.querySelector('.error-message');
+                    errorMsg.textContent = 'WhatsApp inválido. Use formato brasileiro: 21999999999';
+                    isValid = false;
+                } else {
+                    inputGroup.classList.remove('error');
+                }
+            }
+
+            return isValid;
+}
+
+        // Date formatting for form
+        function formatDateToBrazilian(dateString) {
+            try {
+                // dateString vem no formato yyyy-mm-dd do input date
+                const [year, month, day] = dateString.split('-');
+                return `${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('Erro ao formatar data:', dateString, error);
+                return dateString;
+            }
+        }
+                // Form submission
+        document.getElementById('addPersonForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                showAlert('Por favor, corrija os erros no formulário', 'error');
+                return;
+            }
+
+            const formData = new FormData(this);
+            const newPerson = {
+                nome: formData.get('nome').trim().toUpperCase(),
+                empresa: formData.get('empresa').trim() || '',
+                nascimento: formatDateToBrazilian(formData.get('nascimento')), // Converte para dd/mm/yyyy
+                whatsapp: formData.get('whatsapp').trim(),
+                ativo: parseInt(formData.get('status')) === 1
+            };
+
+            console.log('Enviando dados:', newPerson); // Debug
+
+            // Chama a API correta
+            fetch('/api/aniversarios/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newPerson)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeAddModal();
+                    showAlert(`✅ ${data.nome} adicionado com sucesso!`, 'success');
+                    loadAniversariantes(); // Recarrega a tabela
+                    loadDashboard(); // Atualiza dashboard
+                } else {
+                    showAlert('❌ Erro: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                showAlert('❌ Erro de conexão: ' + error.message, 'error');
+            });
+        });
+        // Event listeners do modal
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('addModal');
+            if (event.target === modal) {
+                closeAddModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAddModal();
+            }
+        });
+
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            // Remove tudo que não é número
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limita a 13 dígitos (55 + 11 dígitos)
+            if (value.length > 13) {
+                value = value.slice(0, 13);
+            }
+            
+            e.target.value = value;
+            
+            // Remove erro visual quando usuário está digitando
+            const inputGroup = e.target.parentElement;
+            if (inputGroup.classList.contains('error') && value.length > 8) {
+                inputGroup.classList.remove('error');
+            }
+        });
+
+        // 5. ADICIONE validação em tempo real para nome
+        document.getElementById('nome').addEventListener('input', function(e) {
+            const inputGroup = e.target.parentElement;
+            if (inputGroup.classList.contains('error') && e.target.value.trim()) {
+                inputGroup.classList.remove('error');
+            }
+        });
+
+        // 6. ADICIONE validação em tempo real para nascimento
+        document.getElementById('nascimento').addEventListener('input', function(e) {
+            const inputGroup = e.target.parentElement;
+            if (inputGroup.classList.contains('error') && e.target.value) {
+                inputGroup.classList.remove('error');
+            }
+        });
+
+
+        // Continua com o resto do seu código original...
+    </script>
+</body>
+</html>

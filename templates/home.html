@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2D CONSULTORES - Agenda Executiva</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  <!-- ========== INTEGRAÇÃO TEMPO REAL ========== -->
+  <!-- Socket.IO para WebSocket -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <!-- ========================================== -->
+  
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='Imagens/logo2d.webp') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='Imagens/logo2d.webp') }}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='Imagens/logo2d.webp') }}">
+
+	
+  <!-- Estilos para Autocomplete MELHORADOS -->
+  <style>
+    .autocomplete-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .autocomplete-input {
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .autocomplete-input.loading {
+      background-image: url("data:image/svg+xml,%3csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23666'%3e%3cpath d='M10 3a7 7 0 0 1 7 7 1 1 0 1 1-2 0 5 5 0 1 0-5 5 1 1 0 1 1 0 2 7 7 0 0 1-7-7 7 7 0 0 1 7-7z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      animation: spin 1s linear infinite;
+      padding-right: 45px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .autocomplete-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .autocomplete-suggestion {
+      padding: 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background-color 0.2s;
+    }
+
+    .autocomplete-suggestion:hover,
+    .autocomplete-suggestion.active {
+      background-color: #f8f9fa;
+      border-left: 3px solid #3b82f6;
+      padding-left: 13px;
+    }
+
+    .suggestion-primary {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .suggestion-secondary {
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      gap: 15px;
+    }
+
+    .suggestion-company {
+      color: #0066cc;
+      font-weight: 500;
+    }
+
+    .suggestion-phone {
+      color: #28a745;
+      font-weight: 500;
+    }
+
+    .autocomplete-loading,
+    .autocomplete-no-results {
+      padding: 12px 16px;
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+
+    .form-control.autocomplete-active {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: #ddd;
+    }
+
+    /* Cliente selecionado */
+    .client-selected {
+      background-color: #ecfdf5 !important;
+      border-color: #059669 !important;
+      transition: all 0.3s ease;
+    }
+
+    .client-selected-indicator {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #059669;
+      font-size: 18px;
+      font-weight: bold;
+      pointer-events: none;
+    }
+
+    /* Botões de ação */
+    .autocomplete-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-autocomplete {
+      padding: 6px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      color: #374151;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-autocomplete:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 🆕 BOTÃO NOVO CLIENTE */
+    .btn-autocomplete.btn-adicionar-cliente {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      color: white !important;
+      font-weight: 600 !important;
+      border: none !important;
+    }
+
+    .btn-autocomplete.btn-adicionar-cliente:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    }
+
+    /* Highlight de busca */
+    .autocomplete-suggestion strong {
+      background-color: #fef3c7;
+      color: #92400e;
+      font-weight: 700;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* Animação para campos preenchidos automaticamente */
+    .auto-filled {
+      animation: highlightField 1s ease-out;
+    }
+
+    @keyframes highlightField {
+      0% { 
+        background-color: #ecfdf5;
+        border-color: #059669;
+      }
+      100% { 
+        background-color: white;
+        border-color: #e1e5e9;
+      }
+    }
+
+    /* Status dos campos */
+    .field-status {
+      font-size: 12px;
+      margin-left: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .field-status.filled {
+      color: #059669;
+      font-weight: 500;
+    }
+
+    .field-status.empty {
+      color: #6b7280;
+    }
+
+    /* ========== CAMPO OBRIGATÓRIO ========== */
+    .required {
+      color: #ef4444;
+      font-weight: bold;
+      margin-left: 2px;
+    }
+
+    /* ========== ESTILOS INTEGRAÇÃO TEMPO REAL ========== */
+    
+    /* Animação de atualização de card */
+    @keyframes cardUpdatePulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        border-color: #10b981;
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+    }
+    
+    .meeting-card.updating {
+      animation: cardUpdatePulse 1s ease-in-out;
+    }
+    
+    /* Badge de status de confirmação com destaque */
+    .confirmation-status.status-confirmed {
+      animation: statusHighlight 0.5s ease-out;
+    }
+    
+    @keyframes statusHighlight {
+      0% {
+        background-color: #dcfce7;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+      100% {
+        background-color: #dcfce7;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+    
+    /* Toast de notificação personalizado */
+    .realtime-toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      min-width: 320px;
+      max-width: 400px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 16px 20px;
+      z-index: 9999;
+      animation: slideUpToast 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    @keyframes slideUpToast {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .realtime-toast.success {
+      border-left: 4px solid #10b981;
+    }
+    
+    .realtime-toast.error {
+      border-left: 4px solid #ef4444;
+    }
+    
+    .realtime-toast.info {
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .realtime-toast-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    .realtime-toast.success .realtime-toast-icon {
+      color: #10b981;
+    }
+    
+    .realtime-toast.error .realtime-toast-icon {
+      color: #ef4444;
+    }
+    
+    .realtime-toast.info .realtime-toast-icon {
+      color: #3b82f6;
+    }
+    
+    .realtime-toast-content {
+      flex: 1;
+    }
+    
+    .realtime-toast-title {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    
+    .realtime-toast-message {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    
+    /* Indicador de atividade recente */
+    .recent-activity-indicator {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      animation: activityPulse 2s infinite;
+    }
+    
+    @keyframes activityPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+    
+    /* ========== FIM ESTILOS TEMPO REAL ========== */
+  </style>
+</head>
+<body>
+  <!-- ========== INDICADOR DE CONEXÃO REMOVIDO ========== -->
+  
+  <main class="main-content">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="brand-accent">
+       <img class="logo-inline" src="{{ url_for('static', filename='Imagens/logo2d.webp') }}" >
+       Agenda Executiva
+      </h1>
+      <div class="header-buttons">
+        <!-- Status WhatsApp -->
+        <div id="whatsappStatus" class="whatsapp-status-indicator" onclick="openWhatsAppStatusModal()">
+          <i class="fab fa-whatsapp"></i>
+          <span id="statusText">Verificando...</span>
+        </div>
+        
+        <!-- Botão Dashboard -->
+        <button class="btn-secondary" onclick="window.location.href='{{ url_for('disparador') }}'" title="Ir para Dashboard">
+          <i class="fas fa-chart-bar"></i> 
+          Disparador
+        </button>
+        
+        <button class="btn-whatsapp" onclick="openWhatsAppModal()">
+          <i class="fab fa-whatsapp"></i> 
+          Enviar WhatsApp
+        </button>
+        <button class="btn-primary" onclick="openModal()">
+          <i class="fas fa-plus"></i> 
+          Nova Reunião
+        </button>
+	<!-- ========== BOTÃO NOVO EVENTO ========== -->
+	<button class="btn-evento-header" onclick="abrirModalEvento()">
+  	<i class="fas fa-calendar-plus"></i> 
+ 	 Novo Evento
+	</button>
+      </div>
+    </div>
+
+    <!-- Modal Status WhatsApp -->
+    <div class="modal" id="whatsappStatusModal">
+      <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fab fa-whatsapp"></i>
+            Status WhatsApp Web
+          </h2>
+          <button class="close-btn" onclick="closeWhatsAppStatusModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Status da Conexão -->
+          <div class="status-section">
+            <h3><i class="fas fa-link"></i> Status da Conexão</h3>
+            <div id="connectionStatus" class="status-card">
+              <div class="status-indicator" id="connectionIndicator">
+                <i class="fas fa-circle"></i>
+                <span id="connectionText">Verificando...</span>
+              </div>
+              <div class="status-details" id="connectionDetails"></div>
+            </div>
+          </div>
+
+          <!-- QR Code (se necessário) -->
+          <div id="qrCodeSection" class="status-section" style="display: none;">
+            <h3><i class="fas fa-qrcode"></i> Escaneie o QR Code</h3>
+            <div class="qr-container">
+              <div id="qrCodeDisplay">
+                <div class="qr-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>Gerando QR Code...</p>
+                </div>
+              </div>
+              <p>Use o WhatsApp no seu celular para escanear este código</p>
+            </div>
+          </div>
+
+          <!-- Monitoramento de Respostas -->
+          <div class="status-section">
+            <h3><i class="fas fa-eye"></i> Monitoramento de Respostas</h3>
+            <div id="monitoringStatus" class="status-card">
+              <div class="status-indicator" id="monitoringIndicator">
+                <i class="fas fa-circle"></i>
+                <span id="monitoringText">Verificando...</span>
+              </div>
+              <div class="monitoring-details">
+                <span id="monitoredPhones">0 telefones monitorados</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="status-actions">
+            <button class="btn-secondary" onclick="initializeWhatsApp()">
+              <i class="fas fa-power-off"></i>
+              Inicializar WhatsApp
+            </button>
+            <button class="btn-primary" onclick="generateQRCode()">
+              <i class="fas fa-qrcode"></i>
+              Gerar QR Code
+            </button>
+            <button class="btn-warning" onclick="restartWhatsApp()">
+              <i class="fas fa-redo"></i>
+              Reiniciar Conexão
+            </button>
+            <button class="btn-info" onclick="toggleMonitoring()">
+              <i class="fas fa-play"></i>
+              <span id="monitoringToggleText">Iniciar Monitoramento</span>
+            </button>
+          </div>
+
+          <!-- Logs Recentes -->
+          <div class="status-section">
+            <h3><i class="fas fa-history"></i> Atividade Recente</h3>
+            <div id="recentActivity" class="activity-log">
+              <div class="loading-activity">
+                <i class="fas fa-spinner fa-spin"></i>
+                Carregando atividades...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    <!-- Modal WhatsApp -->
+    <div class="modal" id="whatsappModal">
+      <div class="modal-content" style="max-width: 600px;">
+        <div class="whatsapp-header">
+         <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+  <i class="fab fa-whatsapp" style="font-size: 20px;"></i>
+  <h2 class="modal-title">Enviar WhatsApp</h2>
+</div>
+
+          <button class="close-btn" onclick="closeWhatsAppModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="whatsappForm" onsubmit="event.preventDefault(); sendWhatsApp();">
+            <div class="form-group">
+              <label for="whatsapp_number">Número do WhatsApp</label>
+              <input type="text" id="whatsapp_number" class="form-control" 
+                     placeholder="Ex: 5511999999999" required>
+              <small style="color: #6b7280; font-size: 12px;">
+                Digite apenas números com código do país (Ex: 5511999999999)
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="meeting_select">Selecionar Reunião</label>
+              <select id="meeting_select" class="form-control" onchange="updateMessageFromMeeting()">
+                <option value="">Selecione uma reunião...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="whatsapp_message">Mensagem</label>
+              <textarea id="whatsapp_message" class="form-control" rows="6" 
+                        placeholder="Digite sua mensagem..." required></textarea>
+              <small style="color: #6b7280; font-size: 12px;">
+                Você pode usar as seguintes variáveis: {nome_convidado}, {data_reuniao}, {hora_reuniao}, {assunto}, {nome_cliente}, {local_reuniao}, {link_reuniao}
+              </small>
+            </div>
+
+            <!-- Tipo de Envio -->
+            <div class="form-group">
+              <label>Tipo de Envio</label>
+              <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                  <input type="radio" name="send_type" value="direct" checked>
+                  <span>Envio Direto (wa.me)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                  <input type="radio" name="send_type" value="whatsapp_web">
+                  <span>WhatsApp Web (com monitoramento)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Mensagem Fixa Configurável -->
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <label style="margin: 0;">Configurar Mensagem Padrão</label>
+                <button type="button" class="btn-config" onclick="openMessageTemplateModal()" title="Configurar mensagem padrão">
+                  <i class="fas fa-cog"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-template" onclick="loadDefaultMessage()">
+                <i class="fas fa-magic"></i> 
+                Carregar Mensagem Padrão
+              </button>
+            </div>
+
+            <div style="text-align: right; margin-top: 25px;">
+              <button type="submit" class="btn-whatsapp-send">
+                <i class="fab fa-whatsapp"></i> 
+                Enviar WhatsApp
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Configuração de Mensagem -->
+    <div class="modal" id="messageTemplateModal">
+      <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2 class="modal-title">Configurar Mensagem Padrão</h2>
+          <button class="close-btn" onclick="closeMessageTemplateModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="templateForm" onsubmit="event.preventDefault(); saveMessageTemplate();">
+            <div class="form-group">
+              <label for="message_template">Template da Mensagem</label>
+              <textarea id="message_template" class="form-control" rows="12" 
+                        placeholder="Digite o template da mensagem..." required></textarea>
+              <small style="color: #6b7280; font-size: 12px; margin-top: 10px; display: block;">
+                <strong>Variáveis disponíveis:</strong><br>
+                • {nome_convidado} - Nome do convidado<br>
+                • {data_reuniao} - Data da reunião<br>
+                • {hora_reuniao} - Horário da reunião<br>
+                • {assunto} - Assunto/Departamento<br>
+                • {nome_cliente} - Nome da empresa<br>
+                • {local_reuniao} - Local da reunião<br>
+                • {link_reuniao} - Link da reunião (se houver)<br>
+                • {telefone_cliente} - Telefone do cliente
+              </small>
+            </div>
+
+            <!-- Preview da mensagem -->
+            <div class="form-group">
+              <label>Preview da Mensagem</label>
+              <div id="messagePreview">
+                O preview aparecerá aqui...
+              </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 25px;">
+              <button type="button" class="btn-secondary" onclick="previewTemplate()" style="margin-right: 10px;">
+                <i class="fas fa-eye"></i> 
+                Preview
+              </button>
+              <button type="submit" class="btn-submit">
+                <i class="fas fa-save"></i> 
+                Salvar Template
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+      
+    <!-- Modal Detalhes da Reunião -->
+    <div class="modal" id="meetingDetailsModal">
+      <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-calendar-check"></i>
+            Detalhes da Reunião
+          </h2>
+          <button class="close-btn" onclick="closeMeetingDetailsModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="meetingDetailsContent">
+            <!-- Conteúdo será preenchido dinamicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Nova Reunião com Autocomplete -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Nova Reunião</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="formReuniao" onsubmit="event.preventDefault(); salvarReuniao();">
+            <div class="form-group">
+              <label for="titulo">Título da Reunião</label>
+              <input type="text" id="titulo" name="titulo" class="form-control" 
+                     placeholder="Ex: Reunião de planejamento estratégico" required>
+            </div>
+
+            <!-- Campo Convidado com Autocomplete -->
+            <div class="form-group">
+              <label for="convidado">
+                Convidado 
+                <span style="color: #059669; font-size: 12px;">(com busca automática)</span>
+              </label>
+              
+              <div class="autocomplete-container">
+                <input type="text" 
+                       id="convidado" 
+                       name="convidado" 
+                       class="form-control autocomplete-input" 
+                       placeholder="Digite o nome do cliente..."
+                       required 
+                       autocomplete="off">
+                
+                <!-- Indicador visual de cliente selecionado -->
+                <div class="client-selected-indicator" style="display: none;">✓</div>
+                
+                <!-- Container das sugestões -->
+                <div id="convidado-suggestions" class="autocomplete-suggestions"></div>
+              </div>
+              
+              <!-- Botões de ação para o autocomplete -->
+              <div class="autocomplete-actions">
+                <!-- 🆕 BOTÃO NOVO CLIENTE -->
+                <button type="button" 
+                        class="btn-autocomplete btn-adicionar-cliente" 
+                        onclick="abrirModalNovoCliente()" 
+                        title="Adicionar novo cliente à planilha">
+                  ➕ Novo Cliente
+                </button>
+
+                <button type="button" class="btn-autocomplete" onclick="reloadClientCache()" title="Recarregar dados dos clientes">
+                  🔄 Atualizar Cache
+                </button>
+                <button type="button" class="btn-autocomplete" onclick="showClientStats()" title="Ver estatísticas dos clientes">
+                  📊 Estatísticas
+                </button>
+                <button type="button" class="btn-autocomplete" onclick="clearAutocompleteSelection()" title="Limpar seleção atual">
+                  🗑️ Limpar
+                </button>
+              </div>
+              
+              <!-- Texto de ajuda -->
+              <small style="color: #6b7280; font-size: 12px; margin-top: 5px; display: block;">
+                💡 Digite pelo menos 2 caracteres para buscar automaticamente na base de clientes cadastrados
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="data_hora">Data e Hora</label>
+              <input type="datetime-local" id="data_hora" name="data_hora" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="assunto">Assunto/Departamento</label>
+              <input type="text" id="assunto" name="assunto" class="form-control" 
+                     placeholder="Departamento ou assunto principal">
+            </div>
+
+            <!-- Campo Empresa - Preenchimento Automático ÚNICO -->
+            <div class="form-group">
+              <label for="nome_cliente">
+                Empresa
+                <span id="empresa-status" style="font-size: 12px; color: #6b7280; margin-left: 8px;">
+                  (será preenchido automaticamente)
+                </span>
+              </label>
+              <input type="text" 
+                     id="nome_cliente" 
+                     name="nome_cliente" 
+                     class="form-control" 
+                     placeholder="Selecione um cliente para preencher automaticamente">
+              <small style="color: #6b7280; font-size: 11px; margin-top: 3px; display: block;">
+                Este campo é preenchido automaticamente quando você seleciona um cliente acima
+              </small>
+            </div>
+
+            <!-- Campo Telefone - Preenchimento Automático ÚNICO -->
+            <div class="form-group">
+              <label for="telefone_cliente">
+                Telefone do Cliente
+                <span id="telefone-status" style="font-size: 12px; color: #6b7280; margin-left: 8px;">
+                  (será preenchido automaticamente)
+                </span>
+              </label>
+              <input type="text" 
+                     id="telefone_cliente" 
+                     name="telefone_cliente" 
+                     class="form-control" 
+                     placeholder="Selecione um cliente para preencher automaticamente">
+              <small style="color: #6b7280; font-size: 11px; margin-top: 3px; display: block;">
+                Necessário para envio automático de WhatsApp
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="local_reuniao">Local da Reunião</label>
+              <input type="text" id="local_reuniao" name="local_reuniao" class="form-control" 
+                     placeholder="Ex: Escritório Central, Sala de Reuniões A">
+            </div>
+
+            <div class="form-group">
+              <label for="link">Link da Reunião (Opcional)</label>
+              <input type="url" id="link" name="link" class="form-control" 
+                     placeholder="https://meet.google.com/...">
+            </div>
+
+            <!-- Opção de envio automático -->
+            <div class="form-group">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="auto_send_whatsapp" name="auto_send_whatsapp" checked>
+                <label for="auto_send_whatsapp" style="margin: 0; cursor: pointer;">
+                  <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                  Enviar confirmação automática por WhatsApp
+                </label>
+              </div>
+              <small style="color: #6b7280; font-size: 12px; margin-top: 5px; display: block;">
+                Se marcado, uma mensagem de confirmação será enviada automaticamente para o telefone do cliente
+              </small>
+            </div>
+
+            <div style="text-align: right; margin-top: 25px;">
+              <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-save"></i> 
+                <span id="submitText">Salvar Reunião</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 MODAL NOVO CLIENTE -->
+    <div class="modal" id="modalNovoCliente">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-user-plus"></i>
+            Novo Cliente
+          </h2>
+          <button class="close-btn" onclick="fecharModalNovoCliente()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="formNovoClienteSimples" onsubmit="event.preventDefault(); salvarNovoClienteSimples();">
+            
+            <!-- Nome do Contato -->
+            <div class="form-group">
+              <label for="cliente_nome">
+                Nome do Contato
+                <span class="required">*</span>
+              </label>
+              <input type="text" 
+                     id="cliente_nome" 
+                     class="form-control" 
+                     placeholder="Ex: João Silva"
+                     autocomplete="off"
+                     required>
+            </div>
+
+            <!-- Empresa -->
+            <div class="form-group">
+              <label for="cliente_empresa">
+                Empresa
+                <span class="required">*</span>
+              </label>
+              <input type="text" 
+                     id="cliente_empresa" 
+                     class="form-control" 
+                     placeholder="Ex: Tech Solutions LTDA"
+                     autocomplete="off"
+                     required>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="form-group">
+              <label for="cliente_whatsapp">
+                WhatsApp
+                <span class="required">*</span>
+              </label>
+              <input type="text" 
+                     id="cliente_whatsapp" 
+                     class="form-control" 
+                     placeholder="Ex: 5511999999999"
+                     autocomplete="off"
+                     required
+                     pattern="[0-9+]{10,}">
+              <small style="color: #6b7280; font-size: 11px; margin-top: 3px; display: block;">
+                <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                Telefone com código do país (Ex: 55 + DDD + número)
+              </small>
+            </div>
+
+            <!-- Botões -->
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+              <button type="button" 
+                      class="btn-secondary" 
+                      onclick="fecharModalNovoCliente()"
+                      style="flex: 1;">
+                Cancelar
+              </button>
+              <button type="submit" 
+                      class="btn-submit" 
+                      id="btnSalvarNovoCliente"
+                      style="flex: 1;">
+                <i class="fas fa-plus"></i>
+                Adicionar
+              </button>
+            </div>
+
+            <!-- Status -->
+            <div id="statusNovoCliente" style="display: none; margin-top: 15px;"></div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <i class="fas fa-search"></i>
+        <input type="text" class="filter-input" placeholder="Buscar reuniões..." 
+               id="searchInput" oninput="applyFilters()">
+      </div>
+      
+      <!-- Novo Filtro de Status de Confirmação -->
+      <div class="filter-group">
+        <i class="fas fa-check-circle"></i>
+        <select class="filter-input" id="confirmationFilter" onchange="applyFilters()">
+          <option value="">Todas confirmações</option>
+          <option value="confirmed">Confirmadas</option>
+          <option value="declined">Recusadas</option>
+          <option value="pending">Pendentes</option>
+          <option value="unclear">Não claras</option>
+          <option value="reschedule">Reagendar</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <i class="fas fa-filter"></i>
+        <select class="filter-input" id="statusFilter" onchange="applyFilters()">
+          <option value="">Todas as reuniões</option>
+          <option value="today">Hoje</option>
+          <option value="upcoming" selected>Próximas</option>
+          <option value="past">Passadas</option>
+          <option value="current_week">Esta semana</option>
+        </select>
+      </div>  
+      <div class="filter-group">
+        <i class="fas fa-calendar"></i>
+        <input type="date" class="filter-input" id="dateFilter" onchange="applyFilters()">
+      </div>
+      <div class="filter-group">
+        <button class="btn-refresh" onclick="refreshWeeklyView()" title="Atualizar vista semanal">
+          <i class="fas fa-sync-alt"></i>
+          <span id="refreshText">Atualizar</span>
+        </button>
+      </div>
+      <div class="filter-group">
+        <button class="btn-clear-filters" onclick="clearAllFilters()" title="Limpar todos os filtros">
+          <i class="fas fa-times-circle"></i>
+          <span>Limpar Filtros</span>
+        </button>
+      </div>
+
+    <button class="btn-secondary" onclick="window.location.href='/calendario'" title="Visualização em Calendário">
+       <i class="fas fa-calendar-alt"></i> 
+         Calendário
+    </button>
+    </div>
+  </div>
+    <!-- Week Info -->
+    <div class="week-info" id="weekInfo">
+      <i class="fas fa-calendar-week"></i>
+      <span id="weekText">Carregando...</span>
+    </div>
+
+    <!-- Meetings Grid -->
+    <div id="meetingsGrid">
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Carregando reuniões...</h3>
+        <p>Aguarde um momento.</p>
+      </div>
+    </div>
+   <!-- ========== MODAL NOVO EVENTO ========== -->
+<div class="modal" id="modalEvento">
+  <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-header modal-header-evento">
+      <h2 class="modal-title" id="modalEventoTitle">
+        <i class="fas fa-calendar-alt"></i>
+        Novo Evento
+      </h2>
+      <button class="close-btn" onclick="fecharModalEvento()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form id="formEvento" onsubmit="event.preventDefault(); salvarEvento();">
+        
+        <!-- Título do Evento -->
+        <div class="form-group">
+          <label for="evento_titulo">
+            Título do Evento
+            <span class="required">*</span>
+          </label>
+          <input type="text" 
+                 id="evento_titulo" 
+                 class="form-control" 
+                 placeholder="Ex: Viagem para São Paulo, Feira TechShow"
+                 required>
+        </div>
+
+        <!-- Tipo de Evento -->
+        <div class="form-group">
+          <label for="evento_tipo">
+            Tipo de Evento
+            <span class="required">*</span>
+          </label>
+          <select id="evento_tipo" class="form-control" required>
+            <option value="">Selecione...</option>
+            <option value="viagem">🧳 Viagem</option>
+            <option value="feira">🏢 Feira/Exposição</option>
+            <option value="conferencia">🎤 Conferência</option>
+            <option value="treinamento">📚 Treinamento</option>
+            <option value="evento_interno">🎉 Evento Interno</option>
+            <option value="outro">📌 Outro</option>
+          </select>
+        </div>
+
+        <!-- Data e Hora Início -->
+        <div class="form-group">
+          <label for="evento_data_inicio">
+            Data/Hora Início
+            <span class="required">*</span>
+          </label>
+          <input type="datetime-local" 
+                 id="evento_data_inicio" 
+                 class="form-control" 
+                 required>
+        </div>
+
+        <!-- Data e Hora Fim -->
+        <div class="form-group">
+          <label for="evento_data_fim">
+            Data/Hora Fim
+            <span class="required">*</span>
+          </label>
+          <input type="datetime-local" 
+                 id="evento_data_fim" 
+                 class="form-control" 
+                 required>
+        </div>
+
+        <!-- Local -->
+        <div class="form-group">
+          <label for="evento_local">Local</label>
+          <input type="text" 
+                 id="evento_local" 
+                 class="form-control" 
+                 placeholder="Ex: São Paulo - SP, Hotel Maksoud">
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group">
+          <label for="evento_descricao">Descrição</label>
+          <textarea id="evento_descricao" 
+                    class="form-control" 
+                    rows="4"
+                    placeholder="Detalhes adicionais do evento..."></textarea>
+        </div>
+
+        <!-- Participantes -->
+        <div class="form-group">
+          <label for="evento_participantes">Participantes</label>
+          <input type="text" 
+                 id="evento_participantes" 
+                 class="form-control" 
+                 placeholder="Ex: João Silva, Maria Santos">
+          <small style="color: #6b7280; font-size: 12px;">
+            Separe os nomes por vírgula
+          </small>
+        </div>
+
+        <!-- Cor do Card (Opcional) -->
+        <div class="form-group">
+          <label for="evento_cor">Cor do Card</label>
+          <select id="evento_cor" class="form-control">
+            <option value="amarelo" selected>🟡 Amarelo (Padrão)</option>
+            <option value="laranja">🟠 Laranja</option>
+            <option value="verde">🟢 Verde</option>
+            <option value="azul">🔵 Azul</option>
+            <option value="roxo">🟣 Roxo</option>
+          </select>
+        </div>
+
+        <!-- Botões -->
+        <div style="display: flex; gap: 12px; margin-top: 25px;">
+          <button type="button" 
+                  class="btn-secondary" 
+                  onclick="fecharModalEvento()"
+                  style="flex: 1;">
+            Cancelar
+          </button>
+          <button type="submit" 
+                  class="btn-submit btn-evento" 
+                  id="btnSubmitEvento"
+                  style="flex: 2;">
+            <i class="fas fa-save"></i>
+            <span id="submitEventoText">Salvar Evento</span>
+          </button>
+        </div>
+  </main>
+
+<!-- ========== INTEGRAÇÃO TEMPO REAL ========== -->
+<script src="{{ url_for('static', filename='js/novo_cliente_simples_final.js') }}"></script>
+<!-- ========================================== -->
+
+<!-- ========== SCRIPTS DO SISTEMA ========== -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/novo_cliente_simples_final.js') }}"></script>
+<!-- ========== SCRIPT DE EVENTOS ========== -->
+<script src="{{ url_for('static', filename='js/eventos.js') }}"></script>
+
+  
+  <script>
+// ====== PROTEÇÃO INICIAL ======
+window.realtimeClient = window.realtimeClient || {
+  socket: null,
+  subscribedMeetings: new Set(),
+  monitoring: false,
+  isConnected: () => false,
+  subscribeMeeting: () => console.warn("⚠️ realtimeClient ainda não inicializado"),
+  unsubscribeMeeting: () => {},
+  sendUpdate: () => {}
+};
+// ===============================
+
+    // ========================================================
+    // INTEGRAÇÃO DO SISTEMA DE TEMPO REAL
+    // ========================================================
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Inicializando integração de tempo real...');
+      
+      // Aguarda cliente WebSocket estar pronto (definido em realtime_client.js)
+      setTimeout(() => {
+        if (window.realtimeClient) {
+          setupRealtimeIntegration();
+          updateRealtimeIndicator();
+        } else {
+          console.warn('⚠️ Cliente de tempo real não disponível');
+        }
+      }, 1500);
+    });
+    
+    // ========================================================
+    // CONFIGURAÇÃO DA INTEGRAÇÃO
+    // ========================================================
+    
+    function setupRealtimeIntegration() {
+      console.log('🔗 Configurando integração de tempo real...');
+      
+      // 1. Monitora mudanças de conexão
+      if (realtimeClient.socket) {
+        realtimeClient.socket.on('connect', () => {
+          updateRealtimeIndicator();
+          monitorAllActiveMeetings();
+        });
+        
+        realtimeClient.socket.on('disconnect', () => {
+          updateRealtimeIndicator();
+        });
+        
+        realtimeClient.socket.on('reconnecting', () => {
+          updateRealtimeIndicator('reconnecting');
+        });
+      }
+      
+      // 2. Define callbacks customizados
+      window.onMeetingUpdated = handleRealtimeMeetingUpdate;
+      window.onNewResponse = handleRealtimeNewResponse;
+      
+      // 3. Monitora todas as reuniões ativas inicialmente
+      monitorAllActiveMeetings();
+      
+      console.log('✅ Integração de tempo real configurada');
+    }
+    
+    // ========================================================
+    // ATUALIZAÇÃO DO INDICADOR - ✅ CORRIGIDO
+    // ========================================================
+    
+    // 🆕 FUNÇÃO VAZIA PARA EVITAR ERROS
+    function updateRealtimeIndicator(status = null) {
+      // Indicador desabilitado - função vazia para compatibilidade
+      console.debug('updateRealtimeIndicator: indicador desabilitado');
+    }
+    
+    // ========================================================
+    // CALLBACKS DE ATUALIZAÇÃO
+    // ========================================================
+    
+    /**
+     * Chamado quando reunião é atualizada em tempo real
+     */
+    function handleRealtimeMeetingUpdate(meetingId, meetingData, responses) {
+      console.log(`🔄 Atualização em tempo real - Reunião ${meetingId}:`, meetingData);
+      
+      // 1. Encontra e atualiza o card no grid
+      const card = findMeetingCard(meetingId);
+      if (card) {
+        // Adiciona animação de atualização
+        card.classList.add('updating');
+        setTimeout(() => card.classList.remove('updating'), 1000);
+        
+        // Atualiza badge de status
+        const statusBadge = card.querySelector('.confirmation-status');
+        if (statusBadge && meetingData.status_confirmacao) {
+          const oldStatus = statusBadge.className;
+          statusBadge.className = `confirmation-status status-${meetingData.status_confirmacao}`;
+          statusBadge.textContent = getStatusText(meetingData.status_confirmacao);
+          
+          // Adiciona animação se mudou
+          if (!oldStatus.includes(meetingData.status_confirmacao)) {
+            statusBadge.classList.add('status-confirmed');
+            setTimeout(() => statusBadge.classList.remove('status-confirmed'), 500);
+          }
+        }
+      }
+      
+      // 2. Atualiza modal se estiver aberto
+      const modal = document.getElementById('meetingDetailsModal');
+      if (modal && modal.style.display !== 'none') {
+        const currentMeetingId = window.currentOpenMeetingId;
+        if (currentMeetingId === meetingId) {
+          console.log('🔄 Atualizando modal de detalhes...');
+          // Recarrega detalhes do modal
+          openMeetingDetailsModal(meetingId);
+        }
+      }
+      
+      // 3. Mostra notificação
+      showRealtimeToast(
+        'success',
+        'Reunião Atualizada',
+        `${meetingData.titulo} - ${getStatusText(meetingData.status_confirmacao)}`
+      );
+      
+      // 4. Reproduz som (opcional)
+      playNotificationSound();
+    }
+    
+    /**
+     * Chamado quando há nova resposta do cliente
+     */
+    function handleRealtimeNewResponse(meetingId, response) {
+      console.log(`💬 Nova resposta em tempo real - Reunião ${meetingId}:`, response);
+      
+      // Mostra notificação
+      const meeting = response.response.meeting || {};
+      showRealtimeToast(
+        'info',
+        'Nova Resposta Recebida',
+        `Reunião: ${meeting.titulo || meetingId}`
+      );
+      
+      // Atualiza card se visível
+      const card = findMeetingCard(meetingId);
+      if (card) {
+        card.classList.add('updating');
+        setTimeout(() => card.classList.remove('updating'), 1000);
+      }
+      
+      // Reproduz som
+      playNotificationSound();
+    }
+    
+    // ========================================================
+    // FUNÇÕES AUXILIARES
+    // ========================================================
+    
+    /**
+     * Encontra card da reunião no DOM
+     */
+    function findMeetingCard(meetingId) {
+      // Tenta vários seletores
+      let card = document.querySelector(`.meeting-card[data-meeting-id="${meetingId}"]`);
+      
+      if (!card) {
+        // Tenta alternativa: botões com onclick
+        const buttons = document.querySelectorAll('button[onclick*="openMeetingDetailsModal"]');
+        for (const btn of buttons) {
+          const onclick = btn.getAttribute('onclick');
+          if (onclick && onclick.includes(`(${meetingId})`)) {
+            card = btn.closest('.meeting-card');
+            if (card) break;
+          }
+        }
+      }
+      
+      return card;
+    }
+    
+    /**
+     * Traduz status para texto
+     */
+    function getStatusText(status) {
+      const statusMap = {
+        'confirmed': 'Confirmada',
+        'declined': 'Recusada',
+        'pending': 'Pendente',
+        'unclear': 'Não Clara',
+        'reschedule': 'Reagendar'
+      };
+      return statusMap[status] || 'Pendente';
+    }
+    
+    /**
+     * Mostra toast de notificação
+     */
+    function showRealtimeToast(type, title, message) {
+      const toast = document.createElement('div');
+      toast.className = `realtime-toast ${type}`;
+      
+      const iconMap = {
+        'success': 'fa-check-circle',
+        'error': 'fa-exclamation-circle',
+        'info': 'fa-info-circle'
+      };
+      
+      toast.innerHTML = `
+        <div class="realtime-toast-icon">
+          <i class="fas ${iconMap[type] || 'fa-info-circle'}"></i>
+        </div>
+        <div class="realtime-toast-content">
+          <div class="realtime-toast-title">${title}</div>
+          <div class="realtime-toast-message">${message}</div>
+        </div>
+      `;
+      
+      document.body.appendChild(toast);
+      
+      // Remove após 5 segundos
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+    
+    /**
+     * Reproduz som de notificação
+     */
+    function playNotificationSound() {
+      try {
+        const audio = new Audio('/static/sounds/notification.mp3');
+        audio.volume = 0.3;
+        audio.play().catch(err => console.debug('Som desabilitado'));
+      } catch (err) {
+        // Ignora erros de som
+      }
+    }
+    
+    /**
+     * Monitora todas as reuniões ativas
+     */
+    function monitorAllActiveMeetings() {
+      if (!realtimeClient || !realtimeClient.isConnected()) {
+        console.log('⚠️ Cliente não conectado - pulando monitoramento');
+        return;
+      }
+      
+      // Busca todos os cards de reunião
+      const meetingCards = document.querySelectorAll('.meeting-card[data-meeting-id]');
+      
+      let count = 0;
+      meetingCards.forEach(card => {
+        const meetingId = parseInt(card.getAttribute('data-meeting-id'));
+        if (meetingId) {
+          realtimeClient.subscribeMeeting(meetingId);
+          count++;
+        }
+      });
+      
+      console.log(`📡 Monitorando ${count} reuniões automaticamente`);
+      updateRealtimeIndicator();
+    }
+    
+    /**
+     * Toggle do popup de informações - ✅ CORRIGIDO
+     */
+    // 🆕 FUNÇÃO VAZIA PARA EVITAR ERROS
+    function toggleRealtimeInfo() {
+      console.debug('toggleRealtimeInfo: função desabilitada');
+    }
+    
+    // ========================================================
+    // INTEGRAÇÃO COM MODAL DE DETALHES
+    // ========================================================
+    
+    /**
+     * MODIFICA SUA FUNÇÃO EXISTENTE openMeetingDetailsModal
+     * Adicione estas linhas no final da função
+     */
+    const originalOpenMeetingDetailsModal = window.openMeetingDetailsModal;
+    window.openMeetingDetailsModal = function(meetingId) {
+      // Chama função original
+      if (originalOpenMeetingDetailsModal) {
+        originalOpenMeetingDetailsModal(meetingId);
+      }
+      
+      // 🆕 ADICIONA MONITORAMENTO EM TEMPO REAL
+      if (window.realtimeClient) {
+        realtimeClient.subscribeMeeting(meetingId);
+        window.currentOpenMeetingId = meetingId;
+        console.log(`📡 Monitorando reunião ${meetingId} em tempo real`);
+      }
+    };
+    
+    /**
+     * MODIFICA SUA FUNÇÃO EXISTENTE closeMeetingDetailsModal
+     */
+    const originalCloseMeetingDetailsModal = window.closeMeetingDetailsModal;
+    window.closeMeetingDetailsModal = function() {
+      // Chama função original
+      if (originalCloseMeetingDetailsModal) {
+        originalCloseMeetingDetailsModal();
+      }
+      
+      // 🆕 LIMPA TRACKING
+      window.currentOpenMeetingId = null;
+    };
+    
+    // ========================================================
+    // FALLBACK: POLLING SE WEBSOCKET FALHAR
+    // ========================================================
+    
+    let pollInterval = null;
+    
+    function startPollingFallback() {
+      if (pollInterval) clearInterval(pollInterval);
+      
+      pollInterval = setInterval(async () => {
+        // Só faz polling se WebSocket não estiver conectado
+        if (!realtimeClient || !realtimeClient.isConnected()) {
+          console.log('⚠️ WebSocket offline - usando polling de fallback');
+          
+          try {
+            const response = await fetch('/api/meetings/recent-updates');
+            const data = await response.json();
+            
+            if (data.success && data.updates && data.updates.length > 0) {
+              console.log(`📥 ${data.updates.length} atualizações via polling`);
+              
+              // Recarrega grid
+              if (typeof agenda !== 'undefined' && agenda.applyFilters) {
+                agenda.applyFilters();
+              }
+            }
+          } catch (error) {
+            console.error('Erro no polling:', error);
+          }
+        }
+      }, 30000); // A cada 30 segundos
+    }
+    
+    // Inicia fallback
+    setTimeout(startPollingFallback, 5000);
+    
+    // ========================================================
+    // LOGS E DEBUG
+    // ========================================================
+    
+    console.log('✅ Sistema de Tempo Real carregado');
+    console.log('💡 Use realtimeClient.subscribeMeeting(id) para monitorar reuniões');
+  </script>
+  <!-- ========================================== -->
+  
+  <!-- Captura global de erros -->
+<script>
+window.addEventListener("error", (e) => {
+  console.error("⚠️ Erro JavaScript não tratado:", e.message, e.filename, "L", e.lineno);
+});
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("❌ Promise rejeitada não tratada:", e.reason);
+});
+</script>
+
+</body>
+</html>
