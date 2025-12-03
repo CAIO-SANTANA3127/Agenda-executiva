@@ -158,15 +158,6 @@ Agradecimentos especiais a:
 
 ---
 
-## 📞 Suporte
-
-Precisa de ajuda? Entre em contato:
-
-- 📧 **Email:** caiosantana3127@gmail.com
-- 💬 **Issues:** [GitHub Issues](https://github.com/CAIO-SANTANA3127/Agenda-executiva/issues)
-- 📱 **WhatsApp:** [Clique aqui](https://wa.me/5521999999999)
-
----
 
 ## ⭐ Star History
 
@@ -191,6 +182,7 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
+
 
 
 
