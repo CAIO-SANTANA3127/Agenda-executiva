@@ -62,33 +62,6 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Acesse: **http://localhost:3000**
-
-**Credenciais padrão:** `admin` / `@1234`
-
----
-
-## ⚙️ Configuração
-
-Edite `app.py` (linha 35):
-
-```python
-EVOLUTION_API_CONFIG = {
-    'base_url': 'http://SEU_IP:8090',
-    'api_key': 'SUA_API_KEY',
-    'instance_name': 'sua_instancia',
-    'webhook_url': 'http://SEU_IP:3000/webhook/evolution'
-}
-```
-
-**Configure o Webhook na Evolution API:**
-1. Acesse: `http://SEU_IP:8090`
-2. Instâncias → Sua Instância → Webhooks
-3. URL: `http://SEU_IP:3000/webhook/evolution`
-4. Eventos: ✅ `MESSAGES_UPSERT`
-
----
-
 ## 💡 Uso Básico
 
 **Criar Reunião com Confirmação Automática:**
@@ -516,3 +489,4 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
+
