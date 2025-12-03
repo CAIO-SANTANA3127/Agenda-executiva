@@ -169,7 +169,7 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 
 <div align="center">
 
-### 💡 Desenvolvido com ❤️ para otimizar a gestão de reuniões executivas
+### 💡 Desenvolvido para otimizar a gestão de reuniões executivas
 
 **[⬆ Voltar ao topo](#-agenda-executiva)**
 
@@ -182,6 +182,7 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
+
 
 
 
