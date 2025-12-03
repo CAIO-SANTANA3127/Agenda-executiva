@@ -103,95 +103,6 @@ POST       /api/aniversarios/sync-spreadsheet  # Sincronizar
 
 ---
 
-## 🐛 Troubleshooting
-
-
-### Logs Esperados ao Receber Mensagem
-
-```
-📥 Processando webhook...
-📱 De: 5521999999999@s.whatsapp.net
-💬 Texto: sim, confirmo a reunião
-🔄 Normalizando número...
-🎯 MATCH! Reunião encontrada: ID 123
-📊 Status detectado: confirmed (confiança: 0.95)
-💾 Resposta salva no banco
-✅ Reunião #123 atualizada para: confirmed
-```
-
-
-## 📈 Roadmap
-
-### 🎯 Próximas Funcionalidades
-
-- [ ] 📧 Integração com e-mail (Gmail/Outlook)
-- [ ] 📊 Relatórios em PDF exportáveis
-- [ ] 🔔 Notificações push no navegador
-- [ ] 🌐 API REST completa documentada (Swagger)
-- [ ] 👥 Sistema multi-usuário com permissões
-- [ ] 📱 App mobile (React Native)
-- [ ] 🤖 Chatbot inteligente para agendamento
-- [ ] 📅 Integração com Google Calendar
-- [ ] 💳 Sistema de cobrança de reuniões
-- [ ] 🎨 Temas personalizáveis
-
-### 🐛 Melhorias Planejadas
-
-- [ ] Otimização de queries SQL
-- [ ] Cache Redis para melhor performance
-- [ ] Testes automatizados (pytest)
-- [ ] CI/CD com GitHub Actions
-- [ ] Docker Compose para deploy fácil
-- [ ] Documentação interativa (MkDocs)
-
----
-
-## 🤝 Contribuindo
-
-Contribuições são sempre bem-vindas! 🎉
-
-### Como Contribuir
-
-1. **Fork** este repositório
-2. Crie uma **branch** para sua feature:
-   ```bash
-   git checkout -b feature/minha-nova-funcionalidade
-   ```
-3. **Commit** suas mudanças:
-   ```bash
-   git commit -m 'feat: Adiciona nova funcionalidade X'
-   ```
-4. **Push** para a branch:
-   ```bash
-   git push origin feature/minha-nova-funcionalidade
-   ```
-5. Abra um **Pull Request**
-
-### 📝 Padrão de Commits
-
-Use [Conventional Commits](https://www.conventionalcommits.org/):
-
-- `feat:` Nova funcionalidade
-- `fix:` Correção de bug
-- `docs:` Documentação
-- `style:` Formatação
-- `refactor:` Refatoração de código
-- `test:` Testes
-- `chore:` Tarefas gerais
-
-### 🐛 Reportar Bugs
-
-Abra uma [issue](https://github.com/CAIO-SANTANA3127/Agenda-executiva/issues) com:
-
-- Descrição clara do problema
-- Passos para reproduzir
-- Comportamento esperado vs atual
-- Screenshots (se aplicável)
-- Versão do Python e sistema operacional
-
----
-
-## 📝 Changelog
 
 ### 🎉 v1.0.0 (Dezembro 2024)
 
@@ -215,31 +126,6 @@ Abra uma [issue](https://github.com/CAIO-SANTANA3127/Agenda-executiva/issues) co
 
 ---
 
-## 📄 Licença
-
-Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-```
-MIT License
-
-Copyright (c) 2024 Caio Santana
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-```
-
----
 
 ## 👤 Autor
 
@@ -249,7 +135,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 [![GitHub](https://img.shields.io/badge/GitHub-CAIO--SANTANA3127-181717?logo=github)](https://github.com/CAIO-SANTANA3127)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Caio%20Santana-0077B5?logo=linkedin)](https://linkedin.com/in/seu-perfil)
-[![Email](https://img.shields.io/badge/Email-caiosantana3127@gmail.com-D14836?logo=gmail)](mailto:caiosantana3127@gmail.com)
+
 
 **Desenvolvedor Full Stack | Sistemas de Informação**
 
@@ -305,5 +191,6 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
+
 
 
