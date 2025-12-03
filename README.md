@@ -77,9 +77,8 @@ python app.py
 
 **Sistema de Aniversários:**
 1. Prepare Excel com: NOME, EMPRESA, NASCIMENTO, WHATSAPP
-2. Salve como: `ANIVERSARIOS_CLIENTES.xls`
-3. Acesse: Menu → Disparador → Sincronizar Planilha
-4. Configure horário → Envios automáticos!
+2. Acesse: Menu → Disparador → Sincronizar Planilha
+3. Configure horário → Envios automáticos!
 
 ---
 
@@ -106,67 +105,6 @@ POST       /api/aniversarios/sync-spreadsheet  # Sincronizar
 
 ## 🐛 Troubleshooting
 
-### ❌ Webhook não está funcionando
-
-```bash
-# 1. Verifique o status do monitoramento
-curl http://localhost:3000/whatsapp/monitoring-status
-
-# 2. Force reativação
-curl -X POST http://localhost:3000/whatsapp/force-monitor-all
-
-# 3. Veja os logs
-curl http://localhost:3000/whatsapp/logs
-```
-
-### ❌ WhatsApp desconectado
-
-1. Acesse Evolution Manager: `http://SEU_IP:8090`
-2. Vá em **Instâncias**
-3. Verifique se a instância está com status **"open"** (verde)
-4. Se estiver desconectada, reconecte via QR Code
-
-### ❌ Mensagens não são processadas
-
-**Possíveis causas:**
-
-1. **Telefone não está sendo monitorado**
-   - Solução: Force monitoramento com endpoint `/whatsapp/force-monitor-all`
-
-2. **Palavras-chave não reconhecidas**
-   - Solução: Use as palavras exatas da lista (sim, ok, confirmo, não, etc.)
-
-3. **Webhook não configurado**
-   - Solução: Verifique URL no Evolution Manager
-
-### ❌ Erro ao importar planilha de aniversários
-
-1. Confirme formato: `.xls` ou `.xlsx`
-2. Verifique se as colunas obrigatórias existem
-3. Use encoding UTF-8
-4. Remova caracteres especiais dos nomes
-
-### ❌ Erro "Database is locked"
-
-```bash
-# Reinicie a aplicação
-pkill -f app.py
-python app.py
-```
-
----
-
-## 📊 Logs e Monitoramento
-
-### Visualizar Logs em Tempo Real
-
-```bash
-# Logs da aplicação
-tail -f whatsapp_bot.log
-
-# Logs via API (mais legível)
-curl http://localhost:3000/whatsapp/logs | jq
-```
 
 ### Logs Esperados ao Receber Mensagem
 
@@ -181,128 +119,6 @@ curl http://localhost:3000/whatsapp/logs | jq
 ✅ Reunião #123 atualizada para: confirmed
 ```
 
-### Métricas do Sistema
-
-```bash
-# Status geral
-curl http://localhost:3000/health
-
-# Estatísticas de monitoramento
-curl http://localhost:3000/whatsapp/monitoring-status
-
-# Debug detalhado
-curl http://localhost:3000/whatsapp/debug-monitoring
-```
-
----
-
-## 🔒 Segurança
-
-### ⚠️ Checklist de Segurança
-
-- [ ] Alterar credenciais padrão (admin/@1234)
-- [ ] Configurar HTTPS com certificado SSL
-- [ ] Proteger API keys em variáveis de ambiente
-- [ ] Configurar firewall (permitir apenas portas necessárias)
-- [ ] Fazer backup regular dos bancos de dados
-- [ ] Limitar tentativas de login
-- [ ] Ativar logs de auditoria
-- [ ] Validar inputs do usuário
-
-### 🔐 Variáveis de Ambiente (Recomendado)
-
-Crie um arquivo `.env`:
-
-```bash
-# Evolution API
-EVOLUTION_API_KEY=sua_key_secreta_aqui
-EVOLUTION_BASE_URL=http://seu-ip:8090
-EVOLUTION_INSTANCE=sua_instancia
-
-# Flask
-SECRET_KEY=sua_chave_secreta_flask
-FLASK_ENV=production
-
-# Database
-DATABASE_PATH=/caminho/seguro/reunioes.db
-
-# WhatsApp
-WEBHOOK_URL=http://seu-ip:3000/webhook/evolution
-```
-
-E carregue no `app.py`:
-
-```python
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-EVOLUTION_API_CONFIG = {
-    'base_url': os.getenv('EVOLUTION_BASE_URL'),
-    'api_key': os.getenv('EVOLUTION_API_KEY'),
-    # ...
-}
-```
-
----
-
-## 🚀 Deploy em Produção
-
-### Usando Gunicorn (Recomendado)
-
-```bash
-# Instalar Gunicorn
-pip install gunicorn
-
-# Executar com 4 workers
-gunicorn -w 4 -b 0.0.0.0:3000 app:app
-```
-
-### Usando SystemD (Linux)
-
-Crie o arquivo `/etc/systemd/system/agenda-executiva.service`:
-
-```ini
-[Unit]
-Description=Agenda Executiva
-After=network.target
-
-[Service]
-User=seu_usuario
-WorkingDirectory=/caminho/para/agenda-executiva
-Environment="PATH=/caminho/para/venv/bin"
-ExecStart=/caminho/para/venv/bin/gunicorn -w 4 -b 0.0.0.0:3000 app:app
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Ative e inicie:
-
-```bash
-sudo systemctl enable agenda-executiva
-sudo systemctl start agenda-executiva
-sudo systemctl status agenda-executiva
-```
-
-### Nginx como Proxy Reverso
-
-```nginx
-server {
-    listen 80;
-    server_name seu-dominio.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
----
 
 ## 📈 Roadmap
 
@@ -489,4 +305,5 @@ Se este projeto foi útil para você, considere dar uma ⭐!
 ![Flask](https://img.shields.io/badge/Made%20with-Flask-green?logo=flask)
 
 </div>
+
 
