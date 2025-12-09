@@ -26,6 +26,7 @@ from realtime_integration import (
 )
 #------Sistema Autocomplete modal--------
 import cliente_autocomplete
+
 #------DISPARADOR---------
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -33,17 +34,26 @@ import schedule
 import threading
 import time
 import websocket
+import sys
+import logging
+#----------------
+
+# Força o console do Windows a usar UTF-8
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
 
 # Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('whatsapp_bot.log'),
+        logging.FileHandler('whatsapp_bot.log', encoding='utf-8'),  # <- necessário
         logging.StreamHandler()
     ]
 )
+
 logger = logging.getLogger(__name__)
+
 
 app = Flask(__name__)
 app.secret_key = 'sua_chave_secreta_muito_segura_aqui_2024'
@@ -55,7 +65,7 @@ DATABASE = 'reunioes.db'
 EVOLUTION_API_CONFIG = {
     'base_url': 'http://82.25.69.24:8090',
     'api_key': 'olvjg1k1ldmbhyl8owi6',  # ← CORRIGIDO: Use a key da imagem
-    'instance_name': 'Teste',
+    'instance_name': 'marco_reunioes_bot',
     'webhook_url': 'http://82.25.69.24:3000/webhook/evolution'
 }
 #---------------------------
@@ -100,6 +110,26 @@ def connect():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 '''
+
+# ========== IMPORTS (no início do arquivo) ==========
+from disparador_massa import disparador_bp, init_disparador_module
+from disparador_massa import (
+    disparador_bp, 
+    init_disparador_module, 
+    register_page_route
+)
+
+# ========== APÓS criar app = Flask(__name__) ==========
+# Registra blueprint
+app.register_blueprint(disparador_bp)
+
+# Registra rota da página
+register_page_route(app)
+
+# ========== NO if __name__ == '__main__': ==========
+# Antes de app.run()
+init_disparador_module()
+
 #--------------------------------
 class ResponseAnalyzer:
     """Analisa respostas de clientes para determinar confirmação - VERSÃO CORRIGIDA v2"""
@@ -1196,6 +1226,10 @@ def init_db():
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        
+        if 'numero_pessoas' not in colunas:
+            cursor.execute('ALTER TABLE reunioes ADD COLUMN numero_pessoas INTEGER')
+            logger.info("Coluna numero_pessoas adicionada")
 
         conn.commit()
 
@@ -1268,21 +1302,31 @@ def get_reunioes():
     try:
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM reunioes ORDER BY data_hora")
+            
+            # SELECT explícito - ordem garantida
+            cursor.execute("""
+                SELECT 
+                    id, titulo, convidado, data_hora, assunto, 
+                    link, nome_cliente, telefone_cliente, 
+                    local_reuniao, status_confirmacao, numero_pessoas
+                FROM reunioes 
+                ORDER BY data_hora
+            """)
+            
             return cursor.fetchall()
     except Exception as e:
         logger.error(f"Erro ao buscar reuniões: {e}")
         return []
 
-def salvar_reuniao_db(titulo, convidado, data_hora, departamentos, link, nome_cliente, telefone_cliente, local_reuniao):
-    """VERSÃO CORRIGIDA - Garante created_at e insere a reunião"""
+def salvar_reuniao_db(titulo, convidado, data_hora, departamentos, link, nome_cliente, telefone_cliente, local_reuniao, numero_pessoas=None):
+    """VERSÃO CORRIGIDA - Garante created_at e insere a reunião com numero_pessoas"""
     ensure_created_at_column()
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO reunioes (titulo, convidado, data_hora, assunto, link, nome_cliente, telefone_cliente, local_reuniao, status_confirmacao, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (titulo, convidado, data_hora, departamentos, link, nome_cliente, telefone_cliente, local_reuniao, 'pending', datetime.now().isoformat()))
+            INSERT INTO reunioes (titulo, convidado, data_hora, assunto, link, nome_cliente, telefone_cliente, local_reuniao, numero_pessoas, status_confirmacao, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (titulo, convidado, data_hora, departamentos, link, nome_cliente, telefone_cliente, local_reuniao, numero_pessoas, 'pending', datetime.now().isoformat()))
         meeting_id = cursor.lastrowid
         logger.info(f"Reunião salva: '{titulo}' para {data_hora} (ID: {meeting_id})")
         conn.commit()
@@ -1528,13 +1572,10 @@ def salvar_reuniao():
         # CORREÇÃO: Processa o campo assunto corretamente
         assunto_raw = dados.get('assunto', '')
         if isinstance(assunto_raw, list):
-            # Se vier como lista, junta com vírgulas
             assunto_processado = ', '.join(assunto_raw)
         elif isinstance(assunto_raw, str):
-            # Se vier como string, usa direto
             assunto_processado = assunto_raw.strip()
         else:
-            # Para outros tipos, converte para string
             assunto_processado = str(assunto_raw) if assunto_raw else ''
         
         logger.info(f"🔍 Assunto processado: '{assunto_processado}' (tipo: {type(assunto_processado)})")
@@ -1546,7 +1587,7 @@ def salvar_reuniao():
         # ANTI-DUPLICAÇÃO: Verifica se já foi processada nos últimos 30 segundos
         if timestamp:
             time_diff = time.time() * 1000 - timestamp
-            if time_diff > 30000:  # Mais de 30 segundos
+            if time_diff > 30000:
                 return jsonify({"erro": "Requisição expirada. Tente novamente."}), 400
         
         # Validações básicas
@@ -1561,22 +1602,33 @@ def salvar_reuniao():
         data_hora = dados.get('data_hora')
         if not data_hora:
             return jsonify({"erro": "Data e horário são obrigatórios"}), 400
+
+        # 🆕 VALIDAÇÃO DO NÚMERO DE PESSOAS
+        numero_pessoas = dados.get('numero_pessoas')
+        if numero_pessoas:
+            try:
+                numero_pessoas = int(numero_pessoas)
+                if numero_pessoas < 1 or numero_pessoas > 100:
+                    numero_pessoas = None
+            except (ValueError, TypeError):
+                numero_pessoas = None
         
         try:
             data_reuniao = parser.parse(data_hora)
         except Exception:
             return jsonify({"erro": "Data/horário inválido"}), 400
         
-        # CORREÇÃO: Salva reunião com assunto corrigido
+        # 🆕 CORREÇÃO: Passa numero_pessoas para o banco
         meeting_id = salvar_reuniao_db(
             titulo, 
             convidado, 
             dados.get('data_hora'), 
-            assunto_processado,  # USA O ASSUNTO PROCESSADO CORRETAMENTE
+            assunto_processado,
             dados.get('link', ''), 
             dados.get('nome_cliente', ''), 
             telefone_cliente, 
-            dados.get('local_reuniao', '')
+            dados.get('local_reuniao', ''),
+            numero_pessoas  # ✅ ADICIONE ESTA LINHA
         )
         logger.info(f"💾 Reunião salva com ID: {meeting_id}")
         
@@ -1599,7 +1651,7 @@ def salvar_reuniao():
                 meeting_data = {
                     'convidado': convidado,
                     'data_hora': data_hora,
-                    'assunto': assunto_processado,  # USA O ASSUNTO CORRIGIDO
+                    'assunto': assunto_processado,
                     'link': dados.get('link', ''),
                     'nome_cliente': dados.get('nome_cliente', ''),
                     'local_reuniao': dados.get('local_reuniao', '')
@@ -2222,9 +2274,12 @@ def dados_reunioes():
     try:
         reunioes = get_reunioes()
         lista = []
+        
         for r in reunioes:
-            local_reuniao = r[8] if len(r) > 8 else ""
-            status_confirmacao = r[9] if len(r) > 9 else "pending"
+            # Ordem garantida pelo SELECT explícito:
+            # 0=id, 1=titulo, 2=convidado, 3=data_hora, 4=assunto,
+            # 5=link, 6=nome_cliente, 7=telefone_cliente, 
+            # 8=local_reuniao, 9=status_confirmacao, 10=numero_pessoas
             
             lista.append({
                 "id": r[0],
@@ -2235,10 +2290,13 @@ def dados_reunioes():
                 "link": r[5] or "",
                 "client": r[6] or "",
                 "phone": r[7] or "",
-                "local": local_reuniao or "",
-                "status_confirmacao": status_confirmacao
+                "local": r[8] or "",
+                "status_confirmacao": r[9] if len(r) > 9 else "pending",
+                "numero_pessoas": r[10] if len(r) > 10 else None  # ✅ ÍNDICE 10 CORRETO
             })
+        
         return jsonify(lista)
+        
     except Exception as e:
         logger.error(f"Erro ao buscar dados: {e}")
         return jsonify({"erro": f"Erro ao buscar dados: {str(e)}"}), 500
@@ -2279,6 +2337,16 @@ def editar_reuniao(id):
         telefone_cliente = dados.get('telefone_cliente', '')
         local_reuniao = dados.get('local_reuniao', '')
 
+        # 🆕 ADICIONE VALIDAÇÃO DO NUMERO_PESSOAS
+        numero_pessoas = dados.get('numero_pessoas')
+        if numero_pessoas:
+            try:
+                numero_pessoas = int(numero_pessoas)
+                if numero_pessoas < 1 or numero_pessoas > 100:
+                    numero_pessoas = None
+            except (ValueError, TypeError):
+                numero_pessoas = None
+
         if not all([titulo, convidado, data_hora, assunto]):
             return jsonify({"erro": "Campos obrigatórios não preenchidos"}), 400
 
@@ -2293,11 +2361,12 @@ def editar_reuniao(id):
             if not cursor.fetchone():
                 return jsonify({'erro': 'Reunião não encontrada'}), 404
             
+            # 🆕 ADICIONE numero_pessoas NO UPDATE
             cursor.execute('''
                 UPDATE reunioes
-                SET titulo = ?, convidado = ?, data_hora = ?, assunto = ?, link = ?, nome_cliente = ?, telefone_cliente = ?, local_reuniao = ?
+                SET titulo = ?, convidado = ?, data_hora = ?, assunto = ?, link = ?, nome_cliente = ?, telefone_cliente = ?, local_reuniao = ?, numero_pessoas = ?
                 WHERE id = ?
-            ''', (titulo, convidado, data_hora, assunto, link, nome_cliente, telefone_cliente, local_reuniao, id))
+            ''', (titulo, convidado, data_hora, assunto, link, nome_cliente, telefone_cliente, local_reuniao, numero_pessoas, id))
             conn.commit()
             logger.info(f"Reunião {id} editada")
 
@@ -2313,11 +2382,9 @@ def editar_reuniao(id):
 def evolution_webhook():
     """WEBHOOK COMPLETO — Valida, processa e registra eventos da Evolution API"""
     try:
-        
 
         expected_key = os.getenv("EVOLUTION_API_KEY", EVOLUTION_API_CONFIG.get("api_key", ""))
 
-        
 
         # =============================
         # 2️⃣ Leitura e validação do JSON
@@ -5672,7 +5739,7 @@ def api_reunioes():
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
         
-        # ========== BUSCA REUNIÕES ==========
+        # ========== BUSCA REUNIÕES (🆕 ADICIONADO numero_pessoas) ==========
         cursor.execute('''
             SELECT 
                 id,
@@ -5684,7 +5751,8 @@ def api_reunioes():
                 telefone_cliente,
                 local_reuniao,
                 link,
-                status_confirmacao
+                status_confirmacao,
+                numero_pessoas
             FROM reunioes
             ORDER BY data_hora ASC
         ''')
@@ -5710,12 +5778,12 @@ def api_reunioes():
         eventos = cursor.fetchall()
         conn.close()
         
-        # Converte reuniões
+        # Converte reuniões (🆕 ADICIONADO numero_pessoas no dicionário)
         reunioes_list = []
         for reuniao in reunioes:
             reunioes_list.append({
                 'id': reuniao[0],
-                'tipo_item': 'reuniao',  # 🆕 Identificador
+                'tipo_item': 'reuniao',
                 'titulo': reuniao[1],
                 'convidado': reuniao[2],
                 'data_hora': reuniao[3],
@@ -5724,7 +5792,8 @@ def api_reunioes():
                 'telefone_cliente': reuniao[6] or '',
                 'local_reuniao': reuniao[7] or '',
                 'link': reuniao[8] or '',
-                'confirmation_status': reuniao[9] or 'pending'
+                'confirmation_status': reuniao[9] or 'pending',
+                'numero_pessoas': reuniao[10] if len(reuniao) > 10 and reuniao[10] is not None else None  # 🆕 ADICIONE ESTA LINHA
             })
         
         # Converte eventos
@@ -5732,7 +5801,7 @@ def api_reunioes():
         for evento in eventos:
             eventos_list.append({
                 'id': evento[0],
-                'tipo_item': 'evento',  # 🆕 Identificador
+                'tipo_item': 'evento',
                 'titulo': evento[1],
                 'tipo': evento[2],
                 'data_inicio': evento[3],
@@ -5743,7 +5812,7 @@ def api_reunioes():
                 'cor': evento[8] or 'amarelo'
             })
         
-        # 🆕 RETORNA AMBOS
+        # RETORNA AMBOS
         return jsonify({
             'reunioes': reunioes_list,
             'eventos': eventos_list

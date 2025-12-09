@@ -875,6 +875,7 @@ async init() {
             nome_cliente: getFieldValue('nome_cliente'),
             telefone_cliente: getFieldValue('telefone_cliente'),
             local_reuniao: getFieldValue('local_reuniao'),
+            numero_pessoas: getFieldValue('numero_pessoas'), // 🆕 NOVO
             auto_send_whatsapp: !this.state.editingId ? getCheckboxValue('auto_send_whatsapp') : false
         };
         
@@ -1739,42 +1740,55 @@ async openMeetingDetailsModal(meetingId) {
 
 // Função auxiliar de fallback
 generateBasicMeetingDetailsHTML(meeting) {
-    // Validação defensiva
-    if (!meeting || typeof meeting !== 'object') {
-        return '<p style="color: #ef4444;">Dados inválidos da reunião</p>';
-    }
+    const dateTimeFormatted = Utils.formatDateTime(meeting.datetime);
     
-    const safeGet = (value, defaultValue = 'Não informado') => {
-        if (value == null || value === '') return defaultValue;
-        return String(value);
-    };
-    
-    try {
-        const dateTimeFormatted = Utils.formatDateTime(meeting.datetime);
-        
-        return `
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
-                <div style="margin-bottom: 10px;">
-                    <strong>Título:</strong> ${Utils.sanitizeInput(safeGet(meeting.title))}
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <strong>Convidado:</strong> ${Utils.sanitizeInput(safeGet(meeting.convidado))}
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <strong>Data/Hora:</strong> ${dateTimeFormatted.full || 'Data inválida'}
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <strong>Assunto:</strong> ${Utils.sanitizeInput(safeGet(meeting.assunto))}
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <strong>Cliente:</strong> ${Utils.sanitizeInput(safeGet(meeting.client))}
-                </div>
+    return `
+        <div class="basic-meeting-details" style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Título:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${Utils.sanitizeInput(meeting.title || 'Sem título')}</span>
             </div>
-        `;
-    } catch (err) {
-        console.error('Erro ao gerar HTML básico:', err);
-        return '<p style="color: #ef4444;">Erro ao processar dados da reunião</p>';
-    }
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Convidado:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${Utils.sanitizeInput(meeting.convidado || 'Não informado')}</span>
+            </div>
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Data/Hora:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${dateTimeFormatted.full || dateTimeFormatted.original || 'Data inválida'}</span>
+            </div>
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Assunto:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${Utils.sanitizeInput(Utils.ensureString(meeting.assunto) || 'Não informado')}</span>
+            </div>
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Cliente:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${Utils.sanitizeInput(meeting.client || 'Não informado')}</span>
+            </div>
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Telefone:</label>
+                <span style="margin-left: 10px; color: #6b7280;">${Utils.sanitizeInput(meeting.phone || 'Não informado')}</span>
+            </div>
+            
+            <!-- 🆕 ADICIONE ESTE BLOCO -->
+            ${meeting.numero_pessoas ? `
+            <div class="detail-item" style="margin-bottom: 10px;">
+                <label style="font-weight: 600; color: #374151;">Número de Pessoas:</label>
+                <span style="margin-left: 10px; color: #6b7280;">
+                    <i class="fas fa-users" style="color: #3b82f6; margin-right: 5px;"></i>
+                    ${meeting.numero_pessoas} pessoa${meeting.numero_pessoas > 1 ? 's' : ''}
+                </span>
+            </div>
+            ` : ''}
+            <!-- FIM DO NOVO BLOCO -->
+            
+            <div class="detail-item">
+                <label style="font-weight: 600; color: #374151;">Status:</label>
+                <span class="confirmation-status status-${meeting.status_confirmacao || 'pending'}" style="margin-left: 10px;">
+                    ${this.getConfirmationStatusText(meeting.status_confirmacao || 'pending')}
+                </span>
+            </div>
+        </div>
+    `;
 }
 
 // ================================================
@@ -1900,7 +1914,9 @@ generateBasicMeetingDetailsHTML(meeting) {
             { label: 'Assunto:', value: Utils.ensureString(meeting.assunto) || 'Não informado' },
             { label: 'Cliente:', value: meeting.client || 'Não informado' },
             { label: 'Telefone:', value: meeting.phone || 'Não informado' },
-            { label: 'Local:', value: meeting.local || 'Não informado' }
+            { label: 'Local:', value: meeting.local || 'Não informado' },
+            // 🆕 ADICIONE ESTA LINHA
+            { label: 'Número de Pessoas:', value: meeting.numero_pessoas ? `${meeting.numero_pessoas} pessoa${meeting.numero_pessoas > 1 ? 's' : ''}` : 'Não informado' }
         ];
 
         let html = details.map(detail => `
@@ -2184,6 +2200,7 @@ generateBasicMeetingDetailsHTML(meeting) {
         const phone = Utils.sanitizeInput(meeting.phone || '');
         const local = Utils.sanitizeInput(meeting.local || '');
         const link = meeting.link || '';
+        const numeroPessoas = meeting.numero_pessoas; // 🆕 EXTRAI O VALOR
 
         const dateTimeInfo = Utils.formatDateTime(meeting.datetime);
 
@@ -2231,6 +2248,15 @@ generateBasicMeetingDetailsHTML(meeting) {
                             <i class="fas fa-map-marker-alt"></i>
                             <span>${local}</span>
                         </div>` : ''}
+                    
+                    <!-- 🆕 ADICIONE ESTE BLOCO AQUI -->
+                    ${numeroPessoas ? `
+                        <div class="info-item">
+                            <i class="fas fa-users" style="color: #3b82f6;"></i>
+                            <span>${numeroPessoas} ${numeroPessoas == 1 ? 'pessoa' : 'pessoas'}</span>
+                        </div>` : ''}
+                    <!-- FIM DO NOVO BLOCO -->
+                    
                     ${link ? `
                         <div class="info-item link">
                             <i class="fas fa-video"></i>
@@ -2321,7 +2347,7 @@ generateBasicMeetingDetailsHTML(meeting) {
             
             field.value = value || '';
         };
-
+            
         setFieldValue('titulo', meeting.title);
         setFieldValue('convidado', meeting.convidado);
         setFieldValue('data_hora', meeting.datetime);
@@ -2330,8 +2356,8 @@ generateBasicMeetingDetailsHTML(meeting) {
         setFieldValue('telefone_cliente', meeting.phone);
         setFieldValue('local_reuniao', meeting.local);
         setFieldValue('link', meeting.link);
+        setFieldValue('numero_pessoas', meeting.numero_pessoas); // 🆕 NOVO
     }
-
     async deleteMeeting(id, title) {
         if (!confirm(`Deseja realmente excluir a reunião "${title}"?\n\nEsta ação não pode ser desfeita.`)) {
             return;
@@ -3126,6 +3152,9 @@ function clearAutocompleteSelection() {
 // ================================================
 // FUNÇÕES DE DEBUG APRIMORADAS
 // ================================================
+// ================================================
+// FUNÇÕES DE DEBUG APRIMORADAS
+// ================================================
 function debugAgenda() {
     if (!agenda) {
         console.log('Agenda não inicializada');
@@ -3149,6 +3178,45 @@ function testAutoSend() {
     if (agenda) {
         return agenda.testAutoSend();
     }
+}
+
+function debugMeetingDetails(meetingId) {
+    console.log('=== DEBUG: DETALHES DA REUNIÃO ===');
+    
+    if (!agenda) {
+        console.log('❌ Agenda não inicializada');
+        return;
+    }
+    
+    if (!meetingId) {
+        console.log('❌ ID da reunião não fornecido');
+        console.log('💡 Uso: debugMeetingDetails(123)');
+        return;
+    }
+    
+    const meeting = agenda.state.meetings.find(m => m.id == meetingId);
+    
+    if (!meeting) {
+        console.log(`❌ Reunião ${meetingId} não encontrada`);
+        return;
+    }
+    
+    console.log('📊 Dados da reunião:', meeting);
+    console.log('📅 Data/Hora:', Utils.formatDateTime(meeting.datetime));
+    console.log('📞 Telefone:', meeting.phone || 'Não informado');
+    console.log('✅ Status:', meeting.status_confirmacao || 'pending');
+    
+    // Tenta buscar respostas
+    fetch(`/agenda/responses/${meetingId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.responses) {
+                console.log(`📬 Respostas (${data.responses.length}):`, data.responses);
+            } else {
+                console.log('📭 Nenhuma resposta encontrada');
+            }
+        })
+        .catch(err => console.log('❌ Erro ao buscar respostas:', err.message));
 }
 
 // ================================================
